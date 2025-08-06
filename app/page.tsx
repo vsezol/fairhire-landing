@@ -180,6 +180,9 @@ export default function Home() {
 
   const badges = getBadgeVisibility(demoAnimationProgress);
 
+  const progress = Math.round(demoAnimationProgress * 100);
+  const paddedProgress = String(progress).padStart(3, "\u00A0");
+
   const technologies = [
     { name: "Google Meet", icon: "🎥" },
     { name: "Zoom", icon: "📹" },
@@ -356,7 +359,7 @@ export default function Home() {
           minHeight: "200vh", // Make section taller to allow for scroll hijacking
         }}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 sticky top-0 h-screen flex flex-col justify-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 sticky top-16 flex h-[calc(100vh-4rem)] flex-col justify-center">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">
               Как работает FairHire
@@ -385,10 +388,14 @@ export default function Home() {
                     badges.monitoring ? "monitoring-pulse" : ""
                   }`}
                 >
+                  <h3 className="text-2xl font-bold text-purple-600 mt-6 mb-2">
+                    Интервьюер
+                  </h3>
+
                   <img
                     src="/girl.png"
                     alt="Интервьюер"
-                    className="w-full max-w-xs mx-auto rounded-2xl"
+                    className="w-full max-w-[200px] mx-auto rounded-2xl"
                   />
 
                   {/* Interviewer alerts */}
@@ -423,22 +430,19 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
-
-                <h3 className="text-2xl font-bold text-purple-600 mt-6 mb-2">
-                  Интервьюер
-                </h3>
-                <p className="text-gray-600">
-                  Видит все действия кандидата в режиме реального времени
-                </p>
               </div>
 
               {/* Candidate Side */}
               <div className="text-center relative">
                 <div className="relative inline-block">
+                  <h3 className="text-2xl font-bold text-blue-600 mt-6 mb-2">
+                    Кандидат
+                  </h3>
+
                   <img
                     src="/man.png"
                     alt="Кандидат"
-                    className="w-full max-w-xs mx-auto rounded-2xl"
+                    className="w-full max-w-[200px] mx-auto rounded-2xl"
                   />
 
                   {/* Candidate cheating attempts */}
@@ -473,11 +477,6 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
-
-                <h3 className="text-2xl font-bold text-blue-600 mt-6 mb-2">
-                  Кандидат
-                </h3>
-                <p className="text-gray-600">Пытается обойти систему</p>
               </div>
             </div>
 
@@ -500,12 +499,12 @@ export default function Home() {
               <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50">
                 <div className="bg-purple-600 text-white px-6 py-3 rounded-full text-sm font-semibold shadow-2xl">
                   <div className="flex items-center space-x-3">
-                    <span>
-                      Демонстрация: {Math.round(demoAnimationProgress * 100)}%
+                    <span className="tabular-nums">
+                      Демонстрация: {paddedProgress}%
                     </span>
                     <div className="w-20 h-2 bg-purple-300 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-white rounded-full transition-all duration-300"
+                        className="h-full bg-white rounded-full"
                         style={{ width: `${demoAnimationProgress * 100}%` }}
                       ></div>
                     </div>
