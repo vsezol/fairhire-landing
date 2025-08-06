@@ -42,82 +42,75 @@ export default function Home() {
   };
 
   useEffect(() => {
-    let isScrolling = false;
-
     const handleWheel = (e: WheelEvent) => {
       const demoSection = demoSectionRef.current;
       if (!demoSection) return;
 
-      console.log("handleWheel");
-      
       const rect = demoSection.getBoundingClientRect();
       const sectionTop = rect.top;
       const sectionBottom = rect.bottom;
       const viewportHeight = window.innerHeight;
 
-      // Check if the demo section is fully visible in viewport
-      // Block scrolling only when the section is completely in view
       const isFullyVisible = sectionTop <= 0 && sectionBottom >= viewportHeight;
+      const scrollingDown = e.deltaY > 0;
+      const scrollingUp = e.deltaY < 0;
 
-      // Also check if we're close to having it fully visible (for smooth transition)
-      const isNearlyFullyVisible =
-        sectionTop <= viewportHeight * 0.1 &&
-        sectionBottom >= viewportHeight * 0.9;
-
-      if (isFullyVisible || (isAnimationLocked && isNearlyFullyVisible)) {
-        // Prevent default scrolling
-        e.preventDefault();
-
-        if (!isAnimationLocked) {
-          setIsAnimationLocked(true);
-          document.body.style.overflow = "hidden";
-        }
-
-        // Accumulate scroll delta for smoother animation
-        const currentTime = Date.now();
-        const deltaTime = currentTime - lastScrollTimeRef.current;
-        lastScrollTimeRef.current = currentTime;
-
-        // Normalize wheel delta (different browsers/devices have different scales)
-        const normalizedDelta = e.deltaY * 0.002;
-
-        setAccumulatedDelta((prev) => {
-          const newDelta = prev + normalizedDelta;
-          const clampedDelta = Math.max(0, Math.min(1, newDelta));
-
-          // Update animation progress
-          setDemoAnimationProgress(clampedDelta);
-
-          // If animation is complete, unlock scrolling
-          if (clampedDelta >= 1 && !isScrolling) {
-            isScrolling = true;
-            setTimeout(() => {
-              setIsAnimationLocked(false);
-              document.body.style.overflow = "";
-
-              // Continue scrolling down
-              const nextSection = document.getElementById("technologies");
-              if (nextSection) {
-                nextSection.scrollIntoView({ behavior: "smooth" });
-              }
-              isScrolling = false;
-            }, 500);
-          }
-
-          return clampedDelta;
-        });
-      } else if (isAnimationLocked && sectionTop > viewportHeight * 0.2) {
-        // If we're above the section and trying to scroll up, unlock
-        setIsAnimationLocked(false);
-        setAccumulatedDelta(0);
-        setDemoAnimationProgress(0);
-        document.body.style.overflow = "";
+      // If we are not in the hijack zone, and the animation is not currently locked, do nothing.
+      if (!isFullyVisible && !isAnimationLocked) {
+        return;
       }
+
+      console.log(demoAnimationProgress);
+
+      // If scrolling up and we are at the very top of the animation,
+      // we should release the lock and allow native scrolling.
+      if (scrollingUp && demoAnimationProgress <= 0) {
+        if (isAnimationLocked) {
+          setIsAnimationLocked(false);
+          document.body.style.overflow = "";
+        }
+        // Let the native scroll handle it from here.
+        return;
+      }
+
+      // If scrolling down and we are at the very end of the animation,
+      // release the lock and allow native scrolling to continue to the next section.
+      if (scrollingDown && demoAnimationProgress >= 1) {
+        if (isAnimationLocked) {
+          setIsAnimationLocked(false);
+          document.body.style.overflow = "";
+          // Smoothly scroll to the next section automatically.
+          const nextSection = document.getElementById("technologies");
+          if (nextSection) {
+            nextSection.scrollIntoView({ behavior: "smooth" });
+          }
+        }
+        // Let the native scroll handle it.
+        return;
+      }
+
+      // If we've reached this point, we are in the active animation zone.
+      // We should prevent the default scroll and control the animation.
+      e.preventDefault();
+
+      if (!isAnimationLocked) {
+        setIsAnimationLocked(true);
+        document.body.style.overflow = "hidden";
+      }
+
+      const normalizedDelta = e.deltaY * 0.002;
+
+      setAccumulatedDelta((prev) => {
+        const newDelta = prev + normalizedDelta;
+        const clampedDelta = Math.max(0, Math.min(1, newDelta));
+        console.log("clampedDelta", clampedDelta);
+        setDemoAnimationProgress(clampedDelta);
+        return clampedDelta;
+      });
     };
 
     const handleScroll = () => {
       if (isAnimationLocked) return;
-      console.log("handleScroll");
 
       const currentScrollY = window.scrollY;
       setScrollY(currentScrollY);
@@ -142,6 +135,7 @@ export default function Home() {
       if (!isNearSection) {
         setDemoAnimationProgress(0);
         setAccumulatedDelta(0);
+        console.log("reset");
       }
     };
 
@@ -154,7 +148,7 @@ export default function Home() {
       window.removeEventListener("scroll", handleScroll);
       document.body.style.overflow = "";
     };
-  }, [isAnimationLocked]);
+  }, [isAnimationLocked, demoAnimationProgress]);
 
   // Calculate which badges should be active based on animation progress
   const getBadgeVisibility = (progress: number) => {
