@@ -1,18 +1,18 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent } from '@/components/ui/card';
-import { 
-  Shield, 
-  Eye, 
-  Download, 
-  Users, 
-  CheckCircle, 
-  Star, 
-  Zap, 
+import { useState, useEffect, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Shield,
+  Eye,
+  Download,
+  Users,
+  CheckCircle,
+  Star,
+  Zap,
   Lock,
   Monitor,
   Smartphone,
@@ -20,71 +20,107 @@ import {
   Phone,
   MapPin,
   ArrowRight,
-  Play
-} from 'lucide-react';
+  Play,
+} from "lucide-react";
 
 export default function Home() {
   const [scrollY, setScrollY] = useState(0);
-  const [animationProgress, setAnimationProgress] = useState(0);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
-      
-      // Анимация для демо секции
-      const demoSection = document.getElementById('demo-section');
-      if (demoSection) {
-        const rect = demoSection.getBoundingClientRect();
-        const sectionHeight = demoSection.offsetHeight;
-        const viewportHeight = window.innerHeight;
-        
-        if (rect.top < viewportHeight && rect.bottom > 0) {
-          const progress = Math.max(0, Math.min(1, (viewportHeight - rect.top) / (viewportHeight + sectionHeight / 2)));
-          setAnimationProgress(progress);
-        }
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const [demoAnimationProgress, setDemoAnimationProgress] = useState(0);
+  const demoSectionRef = useRef<HTMLElement>(null);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      element.scrollIntoView({ behavior: "smooth" });
     }
   };
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      setScrollY(currentScrollY);
+
+      const demoSection = demoSectionRef.current;
+      if (!demoSection) return;
+
+      const rect = demoSection.getBoundingClientRect();
+      const sectionTop = currentScrollY + rect.top;
+      const sectionHeight = demoSection.offsetHeight;
+      const viewportHeight = window.innerHeight;
+
+      // Calculate if demo section is in view and how much
+      const sectionStart = sectionTop - viewportHeight;
+      const sectionEnd = sectionTop + sectionHeight;
+
+      if (currentScrollY >= sectionStart && currentScrollY <= sectionEnd) {
+        // Calculate progress based on scroll position within the extended range
+        const totalRange = sectionHeight + viewportHeight;
+        const scrollWithinRange = currentScrollY - sectionStart;
+        const progress = Math.max(
+          0,
+          Math.min(1, scrollWithinRange / totalRange)
+        );
+
+        setDemoAnimationProgress(progress);
+      } else {
+        // Reset animation when out of range
+        setDemoAnimationProgress(0);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Calculate which badges should be active based on animation progress
+  const getBadgeVisibility = (progress: number) => {
+    return {
+      candidate1: progress >= 0.1,
+      interviewer1: progress >= 0.15,
+      candidate2: progress >= 0.3,
+      interviewer2: progress >= 0.35,
+      candidate3: progress >= 0.5,
+      interviewer3: progress >= 0.55,
+      candidate4: progress >= 0.7,
+      interviewer4: progress >= 0.75,
+      connectionLine: progress >= 0.2,
+      monitoring: progress >= 0.8,
+    };
+  };
+
+  const badges = getBadgeVisibility(demoAnimationProgress);
+
   const technologies = [
-    { name: 'Google Meet', icon: '🎥' },
-    { name: 'Zoom', icon: '📹' },
-    { name: 'Jitsi Meet', icon: '💻' },
-    { name: 'Salut Jazz', icon: '🎵' },
-    { name: 'Yandex Code', icon: '⚡' },
-    { name: 'KTalk', icon: '💬' },
+    { name: "Google Meet", icon: "🎥" },
+    { name: "Zoom", icon: "📹" },
+    { name: "Jitsi Meet", icon: "💻" },
+    { name: "Salut Jazz", icon: "🎵" },
+    { name: "Yandex Code", icon: "⚡" },
+    { name: "KTalk", icon: "💬" },
   ];
 
   const benefits = [
     {
       icon: <Shield className="w-8 h-8" />,
-      title: 'Полная защита от списывания',
-      description: 'Отслеживание всех действий кандидата в режиме реального времени'
+      title: "Полная защита от списывания",
+      description:
+        "Отслеживание всех действий кандидата в режиме реального времени",
     },
     {
       icon: <Eye className="w-8 h-8" />,
-      title: 'Прозрачность процесса',
-      description: 'Видите каждое нажатие клавиш, движение мыши и переключение окон'
+      title: "Прозрачность процесса",
+      description:
+        "Видите каждое нажатие клавиш, движение мыши и переключение окон",
     },
     {
       icon: <Zap className="w-8 h-8" />,
-      title: 'Мгновенные уведомления',
-      description: 'Получайте алерты при подозрительной активности кандидата'
+      title: "Мгновенные уведомления",
+      description: "Получайте алерты при подозрительной активности кандидата",
     },
     {
       icon: <Lock className="w-8 h-8" />,
-      title: 'Блокировка скриншотов',
-      description: 'Автоматическая защита от попыток сделать снимки экрана'
+      title: "Блокировка скриншотов",
+      description: "Автоматическая защита от попыток сделать снимки экрана",
     },
   ];
 
@@ -102,48 +138,48 @@ export default function Home() {
                 FairHire
               </span>
             </div>
-            
+
             <nav className="hidden md:flex space-x-8">
-              <button 
-                onClick={() => scrollToSection('hero')}
+              <button
+                onClick={() => scrollToSection("hero")}
                 className="text-gray-700 hover:text-purple-600 transition-colors font-medium"
               >
                 Главная
               </button>
-              <button 
-                onClick={() => scrollToSection('demo-section')}
+              <button
+                onClick={() => scrollToSection("demo-section")}
                 className="text-gray-700 hover:text-purple-600 transition-colors font-medium"
               >
                 Как работает
               </button>
-              <button 
-                onClick={() => scrollToSection('technologies')}
+              <button
+                onClick={() => scrollToSection("technologies")}
                 className="text-gray-700 hover:text-purple-600 transition-colors font-medium"
               >
                 Технологии
               </button>
-              <button 
-                onClick={() => scrollToSection('benefits')}
+              <button
+                onClick={() => scrollToSection("benefits")}
                 className="text-gray-700 hover:text-purple-600 transition-colors font-medium"
               >
                 Преимущества
               </button>
-              <button 
-                onClick={() => scrollToSection('download')}
+              <button
+                onClick={() => scrollToSection("download")}
                 className="text-gray-700 hover:text-purple-600 transition-colors font-medium"
               >
                 Скачать
               </button>
-              <button 
-                onClick={() => scrollToSection('contact')}
+              <button
+                onClick={() => scrollToSection("contact")}
                 className="text-gray-700 hover:text-purple-600 transition-colors font-medium"
               >
                 Контакты
               </button>
             </nav>
 
-            <Button 
-              onClick={() => scrollToSection('download')}
+            <Button
+              onClick={() => scrollToSection("download")}
               className="bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 transform hover:scale-105"
             >
               Попробовать
@@ -154,7 +190,10 @@ export default function Home() {
       </header>
 
       {/* Hero Section */}
-      <section id="hero" className="pt-24 pb-16 bg-gradient-to-br from-purple-50 via-white to-purple-50">
+      <section
+        id="hero"
+        className="pt-24 pb-16 bg-gradient-to-br from-purple-50 via-white to-purple-50"
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-4xl mx-auto">
             <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-purple-600 via-purple-700 to-purple-800 bg-clip-text text-transparent leading-tight">
@@ -163,21 +202,22 @@ export default function Home() {
               без обмана
             </h1>
             <p className="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed">
-              FairHire обеспечивает прозрачность технических интервью, отслеживая действия кандидата 
-              в режиме реального времени и предотвращая списывание
+              FairHire обеспечивает прозрачность технических интервью,
+              отслеживая действия кандидата в режиме реального времени и
+              предотвращая списывание
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <Button 
-                onClick={() => scrollToSection('download')}
+              <Button
+                onClick={() => scrollToSection("download")}
                 size="lg"
                 className="bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl"
               >
                 <Download className="w-5 h-5 mr-2" />
                 Скачать FairHire
               </Button>
-              <Button 
-                onClick={() => scrollToSection('demo-section')}
-                variant="outline" 
+              <Button
+                onClick={() => scrollToSection("demo-section")}
+                variant="outline"
                 size="lg"
                 className="border-2 border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300"
               >
@@ -185,14 +225,16 @@ export default function Home() {
                 Посмотреть демо
               </Button>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
               <div className="text-center">
                 <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-purple-800 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Users className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="text-xl font-semibold mb-2">B2B решение</h3>
-                <p className="text-gray-600">Для HR и технических интервьюеров</p>
+                <p className="text-gray-600">
+                  Для HR и технических интервьюеров
+                </p>
               </div>
               <div className="text-center">
                 <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-purple-800 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -213,100 +255,169 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Demo Animation Section */}
-      <section id="demo-section" className="py-24 bg-gradient-to-br from-gray-50 to-purple-50">
+      {/* Demo Section */}
+      <section
+        ref={demoSectionRef}
+        id="demo-section"
+        className="py-24 bg-gradient-to-br from-gray-50 to-purple-50"
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">
               Как работает FairHire
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Прокрутите вниз, чтобы увидеть, как интервьюер в режиме реального времени 
-              отслеживает попытки кандидата списать
+              Интервьюер в режиме реального времени отслеживает действия
+              кандидата
             </p>
           </div>
 
           <div className="relative">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-              {/* HR Side */}
-              <div className="text-center lg:text-right">
-                <div className="relative">
-                  <div className="w-32 h-32 mx-auto lg:ml-auto lg:mr-0 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center mb-8 transform transition-all duration-1000"
-                       style={{
-                         transform: `scale(${1 + animationProgress * 0.1}) translateY(${-animationProgress * 10}px)`
-                       }}>
-                    <div className="text-white text-4xl">👨‍💼</div>
-                  </div>
-                  <div className="w-48 h-32 mx-auto lg:ml-auto lg:mr-0 bg-gray-300 rounded-lg flex items-center justify-center mb-4">
-                    <div className="w-40 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded flex items-center justify-center">
-                      <Eye className="w-8 h-8 text-white" />
+            {/* Connection line */}
+            <div className="hidden lg:block">
+              <div
+                className={`connection-line ${
+                  badges.connectionLine ? "active" : ""
+                }`}
+              ></div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 justify-between items-center max-w-6xl mx-auto">
+              {/* Interviewer Side */}
+              <div className="text-center relative">
+                <div
+                  className={`relative inline-block ${
+                    badges.monitoring ? "monitoring-pulse" : ""
+                  }`}
+                >
+                  <img
+                    src="/girl.png"
+                    alt="Интервьюер"
+                    className="w-full max-w-xs mx-auto rounded-2xl"
+                  />
+
+                  {/* Interviewer alerts */}
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 space-y-2">
+                    <div
+                      className={`badge-interviewer-1 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold ${
+                        badges.interviewer1 ? "active" : ""
+                      }`}
+                    >
+                      🚨 Кандидат скрывает страницу
+                    </div>
+                    <div
+                      className={`badge-interviewer-2 bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-semibold ${
+                        badges.interviewer2 ? "active" : ""
+                      }`}
+                    >
+                      ⚠️ Подозрительная активность
+                    </div>
+                    <div
+                      className={`badge-interviewer-3 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold ${
+                        badges.interviewer3 ? "active" : ""
+                      }`}
+                    >
+                      📋 Копирование
+                    </div>
+                    <div
+                      className={`badge-interviewer-4 bg-yellow-500 text-black px-3 py-1 rounded-full text-sm font-semibold ${
+                        badges.interviewer4 ? "active" : ""
+                      }`}
+                    >
+                      📊 Надежность: 43%
                     </div>
                   </div>
-                  <h3 className="text-2xl font-bold text-green-600 mb-4">Интервьюер</h3>
-                  <p className="text-gray-600">Видит все действия кандидата</p>
-                  
-                  {/* Alerts that appear based on animation progress */}
-                  {animationProgress > 0.3 && (
-                    <div className="absolute -right-4 top-20 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold animate-pulse">
-                      ⚠️ Скриншот заблокирован!
-                    </div>
-                  )}
-                  
-                  {animationProgress > 0.6 && (
-                    <div className="absolute -right-8 top-32 bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-semibold animate-pulse">
-                      🚨 Ctrl+C обнаружен!
-                    </div>
-                  )}
                 </div>
+
+                <h3 className="text-2xl font-bold text-purple-600 mt-6 mb-2">
+                  Интервьюер
+                </h3>
+                <p className="text-gray-600">
+                  Видит все действия кандидата в режиме реального времени
+                </p>
               </div>
 
               {/* Candidate Side */}
-              <div className="text-center lg:text-left">
-                <div className="relative">
-                  <div className="w-32 h-32 mx-auto lg:mr-auto lg:ml-0 bg-gradient-to-r from-red-500 to-red-600 rounded-full flex items-center justify-center mb-8 transform transition-all duration-1000"
-                       style={{
-                         transform: `scale(${1 + animationProgress * 0.1}) rotate(${animationProgress * 10}deg)`
-                       }}>
-                    <div className="text-white text-4xl">👨‍💻</div>
-                  </div>
-                  <div className="w-48 h-32 mx-auto lg:mr-auto lg:ml-0 bg-gray-300 rounded-lg flex items-center justify-center mb-4">
-                    <div className="w-40 h-24 bg-gray-800 rounded flex items-center justify-center">
-                      <div className="text-green-400 text-xs font-mono">coding...</div>
+              <div className="text-center relative">
+                <div className="relative inline-block">
+                  <img
+                    src="/man.png"
+                    alt="Кандидат"
+                    className="w-full max-w-xs mx-auto rounded-2xl"
+                  />
+
+                  {/* Candidate cheating attempts */}
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 space-y-2">
+                    <div
+                      className={`badge-candidate-1 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold ${
+                        badges.candidate1 ? "active" : ""
+                      }`}
+                    >
+                      Открыл другое приложение
+                    </div>
+                    <div
+                      className={`badge-candidate-2 bg-green-600 text-white px-3 py-1 rounded-full text-sm font-semibold ${
+                        badges.candidate2 ? "active" : ""
+                      }`}
+                    >
+                      📸 Скриншот
+                    </div>
+                    <div
+                      className={`badge-candidate-3 bg-indigo-600 text-white px-3 py-1 rounded-full text-sm font-semibold ${
+                        badges.candidate3 ? "active" : ""
+                      }`}
+                    >
+                      🙈 Скрыть страницу
+                    </div>
+                    <div
+                      className={`badge-candidate-4 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-semibold ${
+                        badges.candidate4 ? "active" : ""
+                      }`}
+                    >
+                      📋 Копировать
                     </div>
                   </div>
-                  <h3 className="text-2xl font-bold text-red-600 mb-4">Кандидат</h3>
-                  <p className="text-gray-600">Пытается обойти систему</p>
-                  
-                  {/* Cheating attempts that appear based on animation progress */}
-                  {animationProgress > 0.2 && (
-                    <div className="absolute -left-4 top-16 bg-purple-600 text-white px-3 py-1 rounded-full text-sm font-semibold opacity-80">
-                      📱 Смотрит в телефон
-                    </div>
-                  )}
-                  
-                  {animationProgress > 0.5 && (
-                    <div className="absolute -left-8 top-28 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold opacity-80">
-                      📋 Пытается скопировать
-                    </div>
-                  )}
-                  
-                  {animationProgress > 0.8 && (
-                    <div className="absolute -left-6 top-40 bg-yellow-600 text-white px-3 py-1 rounded-full text-sm font-semibold opacity-80">
-                      🖼️ Делает скриншот
-                    </div>
-                  )}
                 </div>
+
+                <h3 className="text-2xl font-bold text-blue-600 mt-6 mb-2">
+                  Кандидат
+                </h3>
+                <p className="text-gray-600">Пытается обойти систему</p>
               </div>
             </div>
 
-            {/* Connection Line */}
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 hidden lg:block">
-              <div className={`w-24 h-1 bg-gradient-to-r from-green-500 to-red-500 rounded-full transition-all duration-1000 ${
-                animationProgress > 0.1 ? 'animate-pulse' : ''
-              }`}>
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-purple-600 rounded-full animate-ping"></div>
+            {/* Mobile connection indicator */}
+            <div className="lg:hidden text-center mt-8">
+              <div
+                className={`inline-flex items-center space-x-2 bg-purple-600 text-white px-4 py-2 rounded-full ${
+                  badges.monitoring ? "animate-pulse" : ""
+                }`}
+              >
+                <span>📡</span>
+                <span className="text-sm font-semibold">
+                  Мониторинг в реальном времени
+                </span>
               </div>
             </div>
+
+            {/* Progress indicator only when animation is active */}
+            {demoAnimationProgress > 0 && demoAnimationProgress < 1 && (
+              <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50">
+                <div className="bg-purple-600 text-white px-6 py-3 rounded-full text-sm font-semibold shadow-2xl">
+                  <div className="flex items-center space-x-3">
+                    <span>
+                      Демонстрация: {Math.round(demoAnimationProgress * 100)}%
+                    </span>
+                    <div className="w-20 h-2 bg-purple-300 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-white rounded-full transition-all duration-300"
+                        style={{ width: `${demoAnimationProgress * 100}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -319,7 +430,8 @@ export default function Home() {
               Поддерживаемые платформы
             </h2>
             <p className="text-xl text-gray-600">
-              FairHire интегрируется со всеми популярными платформами для проведения интервью
+              FairHire интегрируется со всеми популярными платформами для
+              проведения интервью
             </p>
           </div>
 
@@ -327,9 +439,13 @@ export default function Home() {
             {technologies.map((tech, index) => (
               <div key={index} className="text-center group cursor-pointer">
                 <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl flex items-center justify-center text-4xl group-hover:from-purple-600 group-hover:to-purple-800 transition-all duration-300 transform group-hover:scale-110 group-hover:shadow-xl">
-                  <span className="group-hover:grayscale-0 group-hover:text-white transition-all duration-300">{tech.icon}</span>
+                  <span className="group-hover:grayscale-0 group-hover:text-white transition-all duration-300">
+                    {tech.icon}
+                  </span>
                 </div>
-                <p className="font-semibold text-gray-700 group-hover:text-purple-600 transition-colors">{tech.name}</p>
+                <p className="font-semibold text-gray-700 group-hover:text-purple-600 transition-colors">
+                  {tech.name}
+                </p>
               </div>
             ))}
           </div>
@@ -337,27 +453,37 @@ export default function Home() {
       </section>
 
       {/* Benefits Section */}
-      <section id="benefits" className="py-24 bg-gradient-to-br from-purple-50 via-white to-purple-50">
+      <section
+        id="benefits"
+        className="py-24 bg-gradient-to-br from-purple-50 via-white to-purple-50"
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">
               Почему выбирают FairHire
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Революционное решение для проведения честных технических интервью. 
+              Революционное решение для проведения честных технических интервью.
               Повысьте качество найма и исключите возможность обмана.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
             {benefits.map((benefit, index) => (
-              <Card key={index} className="text-center p-8 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border-0 bg-white/80 backdrop-blur-sm">
+              <Card
+                key={index}
+                className="text-center p-8 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border-0 bg-white/80 backdrop-blur-sm"
+              >
                 <CardContent className="pt-6">
                   <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-r from-purple-600 to-purple-800 rounded-full flex items-center justify-center text-white">
                     {benefit.icon}
                   </div>
-                  <h3 className="text-xl font-bold mb-4 text-gray-900">{benefit.title}</h3>
-                  <p className="text-gray-600 leading-relaxed">{benefit.description}</p>
+                  <h3 className="text-xl font-bold mb-4 text-gray-900">
+                    {benefit.title}
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed">
+                    {benefit.description}
+                  </p>
                 </CardContent>
               </Card>
             ))}
@@ -368,8 +494,9 @@ export default function Home() {
               Увеличьте эффективность найма на 85%
             </h3>
             <p className="text-xl mb-8 opacity-90 max-w-3xl mx-auto">
-              Исследования показывают, что использование FairHire снижает количество некачественных 
-              кандидатов на 85% и повышает точность оценки технических навыков на 92%.
+              Исследования показывают, что использование FairHire снижает
+              количество некачественных кандидатов на 85% и повышает точность
+              оценки технических навыков на 92%.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div>
@@ -397,7 +524,7 @@ export default function Home() {
               Начните использовать FairHire
             </h2>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              Выберите вашу роль и скачайте соответствующее приложение. 
+              Выберите вашу роль и скачайте соответствующее приложение.
               Настройка займет менее 2 минут.
             </p>
           </div>
@@ -411,7 +538,7 @@ export default function Home() {
                 </div>
                 <h3 className="text-3xl font-bold mb-4">Для интервьюеров</h3>
                 <p className="text-lg text-purple-100 mb-8">
-                  Получите полный контроль над процессом собеседования. 
+                  Получите полный контроль над процессом собеседования.
                   Отслеживайте действия кандидатов в режиме реального времени.
                 </p>
                 <ul className="text-left space-y-3 mb-8 text-purple-100">
@@ -428,7 +555,7 @@ export default function Home() {
                     Мгновенные уведомления
                   </li>
                 </ul>
-                <Button 
+                <Button
                   size="lg"
                   className="w-full bg-white text-purple-800 hover:bg-gray-100 font-bold text-lg py-4 rounded-xl transform hover:scale-105 transition-all duration-300 shadow-xl"
                 >
@@ -446,7 +573,7 @@ export default function Home() {
                 </div>
                 <h3 className="text-3xl font-bold mb-4">Для кандидатов</h3>
                 <p className="text-lg text-blue-100 mb-8">
-                  Установите приложение для участия в честном собеседовании. 
+                  Установите приложение для участия в честном собеседовании.
                   Простая настройка за несколько кликов.
                 </p>
                 <ul className="text-left space-y-3 mb-8 text-blue-100">
@@ -464,14 +591,14 @@ export default function Home() {
                   </li>
                 </ul>
                 <div className="space-y-4">
-                  <Button 
+                  <Button
                     size="lg"
                     className="w-full bg-white text-blue-800 hover:bg-gray-100 font-bold text-lg py-4 rounded-xl transform hover:scale-105 transition-all duration-300 shadow-xl"
                   >
                     <Download className="w-5 h-5 mr-2" />
                     Скачать для macOS
                   </Button>
-                  <Button 
+                  <Button
                     size="lg"
                     className="w-full bg-white text-blue-800 hover:bg-gray-100 font-bold text-lg py-4 rounded-xl transform hover:scale-105 transition-all duration-300 shadow-xl"
                   >
@@ -489,12 +616,16 @@ export default function Home() {
               <div className="bg-gray-800 rounded-lg p-6">
                 <h4 className="font-bold text-lg mb-3">macOS</h4>
                 <p className="text-gray-300">macOS 10.15 или новее</p>
-                <p className="text-gray-300">4 ГБ RAM, 100 МБ свободного места</p>
+                <p className="text-gray-300">
+                  4 ГБ RAM, 100 МБ свободного места
+                </p>
               </div>
               <div className="bg-gray-800 rounded-lg p-6">
                 <h4 className="font-bold text-lg mb-3">Windows</h4>
                 <p className="text-gray-300">Windows 10 или новее</p>
-                <p className="text-gray-300">4 ГБ RAM, 100 МБ свободного места</p>
+                <p className="text-gray-300">
+                  4 ГБ RAM, 100 МБ свободного места
+                </p>
               </div>
             </div>
           </div>
@@ -502,81 +633,101 @@ export default function Home() {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="py-24 bg-gradient-to-br from-purple-50 via-white to-purple-50">
+      <section
+        id="contact"
+        className="py-24 bg-gradient-to-br from-purple-50 via-white to-purple-50"
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">
               Связаться с нами
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Есть вопросы о FairHire? Хотите персональную демонстрацию? 
-              Мы поможем интегрировать решение в ваш процесс найма.
+              Есть вопросы о FairHire? Хотите персональную демонстрацию? Мы
+              поможем интегрировать решение в ваш процесс найма.
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
             <div>
-              <h3 className="text-2xl font-bold mb-8 text-gray-900">Отправьте сообщение</h3>
+              <h3 className="text-2xl font-bold mb-8 text-gray-900">
+                Отправьте сообщение
+              </h3>
               <form className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label
+                      htmlFor="firstName"
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                    >
                       Имя
                     </label>
-                    <Input 
-                      id="firstName" 
-                      type="text" 
+                    <Input
+                      id="firstName"
+                      type="text"
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
                       placeholder="Ваше имя"
                     />
                   </div>
                   <div>
-                    <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label
+                      htmlFor="lastName"
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                    >
                       Фамилия
                     </label>
-                    <Input 
-                      id="lastName" 
-                      type="text" 
+                    <Input
+                      id="lastName"
+                      type="text"
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
                       placeholder="Ваша фамилия"
                     />
                   </div>
                 </div>
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     Email
                   </label>
-                  <Input 
-                    id="email" 
-                    type="email" 
+                  <Input
+                    id="email"
+                    type="email"
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
                     placeholder="your@company.com"
                   />
                 </div>
                 <div>
-                  <label htmlFor="company" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="company"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     Компания
                   </label>
-                  <Input 
-                    id="company" 
-                    type="text" 
+                  <Input
+                    id="company"
+                    type="text"
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
                     placeholder="Название компании"
                   />
                 </div>
                 <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="message"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     Сообщение
                   </label>
-                  <Textarea 
-                    id="message" 
+                  <Textarea
+                    id="message"
                     rows={5}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
                     placeholder="Расскажите о ваших потребностях в области найма..."
                   />
                 </div>
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   size="lg"
                   className="w-full bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white py-4 rounded-xl font-semibold text-lg transform hover:scale-105 transition-all duration-300 shadow-xl"
                 >
@@ -588,28 +739,34 @@ export default function Home() {
 
             <div className="space-y-8">
               <div>
-                <h3 className="text-2xl font-bold mb-8 text-gray-900">Наши контакты</h3>
+                <h3 className="text-2xl font-bold mb-8 text-gray-900">
+                  Наши контакты
+                </h3>
                 <div className="space-y-6">
                   <div className="flex items-start space-x-4">
                     <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-purple-800 rounded-lg flex items-center justify-center">
                       <Mail className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-gray-900 mb-1">Email</h4>
+                      <h4 className="font-semibold text-gray-900 mb-1">
+                        Email
+                      </h4>
                       <p className="text-gray-600">hello@fairhire.com</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start space-x-4">
                     <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-purple-800 rounded-lg flex items-center justify-center">
                       <Phone className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-gray-900 mb-1">Телефон</h4>
+                      <h4 className="font-semibold text-gray-900 mb-1">
+                        Телефон
+                      </h4>
                       <p className="text-gray-600">+7 (495) 123-45-67</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start space-x-4">
                     <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-purple-800 rounded-lg flex items-center justify-center">
                       <MapPin className="w-6 h-6 text-white" />
@@ -623,12 +780,14 @@ export default function Home() {
               </div>
 
               <div className="bg-gradient-to-r from-purple-600 to-purple-800 rounded-2xl p-8 text-white">
-                <h4 className="text-xl font-bold mb-4">Нужна персональная демонстрация?</h4>
+                <h4 className="text-xl font-bold mb-4">
+                  Нужна персональная демонстрация?
+                </h4>
                 <p className="mb-6 opacity-90">
-                  Забронируйте 30-минутную персональную демонстрацию FairHire и узнайте, 
-                  как мы можем улучшить ваш процесс найма.
+                  Забронируйте 30-минутную персональную демонстрацию FairHire и
+                  узнайте, как мы можем улучшить ваш процесс найма.
                 </p>
-                <Button 
+                <Button
                   variant="secondary"
                   className="bg-white text-purple-800 hover:bg-gray-100 font-semibold px-6 py-3 rounded-lg"
                 >
@@ -654,8 +813,9 @@ export default function Home() {
                 </span>
               </div>
               <p className="text-gray-300 mb-6 max-w-md">
-                Революционное решение для проведения честных технических интервью. 
-                Повысьте качество найма с помощью передовых технологий мониторинга.
+                Революционное решение для проведения честных технических
+                интервью. Повысьте качество найма с помощью передовых технологий
+                мониторинга.
               </p>
               <div className="flex space-x-4">
                 <div className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-purple-600 transition-colors cursor-pointer">
@@ -669,36 +829,98 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            
+
             <div>
               <h4 className="font-bold text-lg mb-4">Продукт</h4>
               <ul className="space-y-3 text-gray-300">
-                <li><a href="#" className="hover:text-purple-400 transition-colors">Возможности</a></li>
-                <li><a href="#" className="hover:text-purple-400 transition-colors">Цены</a></li>
-                <li><a href="#" className="hover:text-purple-400 transition-colors">Интеграции</a></li>
-                <li><a href="#" className="hover:text-purple-400 transition-colors">API</a></li>
+                <li>
+                  <a
+                    href="#"
+                    className="hover:text-purple-400 transition-colors"
+                  >
+                    Возможности
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="hover:text-purple-400 transition-colors"
+                  >
+                    Цены
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="hover:text-purple-400 transition-colors"
+                  >
+                    Интеграции
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="hover:text-purple-400 transition-colors"
+                  >
+                    API
+                  </a>
+                </li>
               </ul>
             </div>
-            
+
             <div>
               <h4 className="font-bold text-lg mb-4">Поддержка</h4>
               <ul className="space-y-3 text-gray-300">
-                <li><a href="#" className="hover:text-purple-400 transition-colors">Документация</a></li>
-                <li><a href="#" className="hover:text-purple-400 transition-colors">FAQ</a></li>
-                <li><a href="#" className="hover:text-purple-400 transition-colors">Контакты</a></li>
-                <li><a href="#" className="hover:text-purple-400 transition-colors">Статус системы</a></li>
+                <li>
+                  <a
+                    href="#"
+                    className="hover:text-purple-400 transition-colors"
+                  >
+                    Документация
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="hover:text-purple-400 transition-colors"
+                  >
+                    FAQ
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="hover:text-purple-400 transition-colors"
+                  >
+                    Контакты
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="hover:text-purple-400 transition-colors"
+                  >
+                    Статус системы
+                  </a>
+                </li>
               </ul>
             </div>
           </div>
-          
+
           <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm">
               © 2024 FairHire. Все права защищены.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0 text-sm text-gray-400">
-              <a href="#" className="hover:text-purple-400 transition-colors">Политика конфиденциальности</a>
-              <a href="#" className="hover:text-purple-400 transition-colors">Условия использования</a>
-              <a href="#" className="hover:text-purple-400 transition-colors">Cookies</a>
+              <a href="#" className="hover:text-purple-400 transition-colors">
+                Политика конфиденциальности
+              </a>
+              <a href="#" className="hover:text-purple-400 transition-colors">
+                Условия использования
+              </a>
+              <a href="#" className="hover:text-purple-400 transition-colors">
+                Cookies
+              </a>
             </div>
           </div>
         </div>
