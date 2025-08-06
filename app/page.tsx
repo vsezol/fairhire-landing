@@ -48,6 +48,8 @@ export default function Home() {
       const demoSection = demoSectionRef.current;
       if (!demoSection) return;
 
+      console.log("handleWheel");
+      
       const rect = demoSection.getBoundingClientRect();
       const sectionTop = rect.top;
       const sectionBottom = rect.bottom;
@@ -115,6 +117,7 @@ export default function Home() {
 
     const handleScroll = () => {
       if (isAnimationLocked) return;
+      console.log("handleScroll");
 
       const currentScrollY = window.scrollY;
       setScrollY(currentScrollY);
@@ -356,18 +359,6 @@ export default function Home() {
               Интервьюер в режиме реального времени отслеживает действия
               кандидата
             </p>
-
-            {/* Approaching demo indicator */}
-            {isApproachingDemo && !isAnimationLocked && (
-              <div className="mt-6 animate-bounce">
-                <div className="inline-flex items-center space-x-2 bg-purple-100 text-purple-700 px-4 py-2 rounded-full text-sm font-medium">
-                  <span>🎯</span>
-                  <span>
-                    Продолжайте скроллить для интерактивной демонстрации
-                  </span>
-                </div>
-              </div>
-            )}
           </div>
 
           <div className="relative">
