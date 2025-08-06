@@ -59,9 +59,6 @@ export default function Home() {
       if (!isFullyVisible && !isAnimationLocked) {
         return;
       }
-
-      console.log(demoAnimationProgress);
-
       // If scrolling up and we are at the very top of the animation,
       // we should release the lock and allow native scrolling.
       if (scrollingUp && demoAnimationProgress <= 0) {
@@ -103,7 +100,6 @@ export default function Home() {
       setAccumulatedDelta((prev) => {
         const newDelta = prev + normalizedDelta;
         const clampedDelta = Math.max(0, Math.min(1, newDelta));
-        console.log("clampedDelta", clampedDelta);
         setDemoAnimationProgress(clampedDelta);
         return clampedDelta;
       });
@@ -133,9 +129,19 @@ export default function Home() {
       const isNearSection = sectionTop <= viewportHeight && sectionBottom >= 0;
 
       if (!isNearSection) {
-        setDemoAnimationProgress(0);
-        setAccumulatedDelta(0);
-        console.log("reset");
+        if (sectionBottom < 0) {
+          // We are past the section (scrolling down), so animation is complete
+          if (demoAnimationProgress < 1) {
+            setDemoAnimationProgress(1);
+            setAccumulatedDelta(1);
+          }
+        } else {
+          // We are before the section (scrolling up), so animation is at the start
+          if (demoAnimationProgress > 0) {
+            setDemoAnimationProgress(0);
+            setAccumulatedDelta(0);
+          }
+        }
       }
     };
 
