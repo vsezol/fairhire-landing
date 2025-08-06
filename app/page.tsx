@@ -401,32 +401,32 @@ export default function Home() {
                   {/* Interviewer alerts */}
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 space-y-2">
                     <div
-                      className={`badge-interviewer-1 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold ${
+                      className={`badge-interviewer-1 w-fit bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold ${
                         badges.interviewer1 ? "active" : ""
                       }`}
                     >
-                      🚨 Кандидат скрывает страницу
+                      🚨 Скрытие приложения!
                     </div>
                     <div
-                      className={`badge-interviewer-2 bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-semibold ${
+                      className={`badge-interviewer-2 w-fit bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-semibold ${
                         badges.interviewer2 ? "active" : ""
                       }`}
                     >
-                      ⚠️ Подозрительная активность
+                      ⚠️ Cкриншот!
                     </div>
                     <div
-                      className={`badge-interviewer-3 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold ${
+                      className={`badge-interviewer-3 w-fit bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold ${
                         badges.interviewer3 ? "active" : ""
                       }`}
                     >
-                      📋 Копирование
+                      ⚠️ Копирование!
                     </div>
                     <div
-                      className={`badge-interviewer-4 bg-yellow-500 text-black px-3 py-1 rounded-full text-sm font-semibold ${
+                      className={`badge-interviewer-4 w-fit bg-yellow-500 text-black px-3 py-1 rounded-full text-sm font-semibold ${
                         badges.interviewer4 ? "active" : ""
                       }`}
                     >
-                      📊 Надежность: 43%
+                      Подозрительно!
                     </div>
                   </div>
                 </div>
@@ -448,32 +448,32 @@ export default function Home() {
                   {/* Candidate cheating attempts */}
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 space-y-2">
                     <div
-                      className={`badge-candidate-1 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold ${
+                      className={`badge-candidate-1 w-fit bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold ${
                         badges.candidate1 ? "active" : ""
                       }`}
                     >
-                      Открыл другое приложение
+                      Открыл Google
                     </div>
                     <div
-                      className={`badge-candidate-2 bg-green-600 text-white px-3 py-1 rounded-full text-sm font-semibold ${
+                      className={`badge-candidate-2 w-fit bg-green-600 text-white px-3 py-1 rounded-full text-sm font-semibold ${
                         badges.candidate2 ? "active" : ""
                       }`}
                     >
                       📸 Скриншот
                     </div>
                     <div
-                      className={`badge-candidate-3 bg-indigo-600 text-white px-3 py-1 rounded-full text-sm font-semibold ${
+                      className={`badge-candidate-3 w-fit bg-indigo-600 text-white px-3 py-1 rounded-full text-sm font-semibold ${
                         badges.candidate3 ? "active" : ""
                       }`}
                     >
-                      🙈 Скрыть страницу
+                      Ctrl + C / Ctrl + V
                     </div>
                     <div
-                      className={`badge-candidate-4 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-semibold ${
+                      className={`badge-candidate-4 w-fit bg-red-600 text-white px-3 py-1 rounded-full text-sm font-semibold ${
                         badges.candidate4 ? "active" : ""
                       }`}
                     >
-                      📋 Копировать
+                      Открыл ChatGPT
                     </div>
                   </div>
                 </div>
