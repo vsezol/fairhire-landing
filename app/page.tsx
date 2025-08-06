@@ -76,10 +76,16 @@ export default function Home() {
         if (isAnimationLocked) {
           setIsAnimationLocked(false);
           document.body.style.overflow = "";
-          // Smoothly scroll to the next section automatically.
-          const nextSection = document.getElementById("technologies");
-          if (nextSection) {
-            nextSection.scrollIntoView({ behavior: "smooth" });
+          // Instead of jumping to the next section, scroll to the end of the current one.
+          const demoSection = demoSectionRef.current;
+          if (demoSection) {
+            window.scrollTo({
+              top:
+                demoSection.offsetTop +
+                demoSection.scrollHeight -
+                window.innerHeight,
+              behavior: "smooth",
+            });
           }
         }
         // Let the native scroll handle it.
