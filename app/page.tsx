@@ -25,15 +25,9 @@ import {
 } from "lucide-react";
 
 export default function Home() {
-  const [scrollY, setScrollY] = useState(0);
   const [demoAnimationProgress, setDemoAnimationProgress] = useState(0);
-  const [isAnimationLocked, setIsAnimationLocked] = useState(false);
-  const [accumulatedDelta, setAccumulatedDelta] = useState(0);
-  const [isApproachingDemo, setIsApproachingDemo] = useState(false);
 
   const demoSectionRef = useRef<HTMLElement>(null);
-  const animationFrameRef = useRef<number>();
-  const lastScrollTimeRef = useRef<number>(0);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -43,125 +37,37 @@ export default function Home() {
   };
 
   useEffect(() => {
-    const handleWheel = (e: WheelEvent) => {
-      const demoSection = demoSectionRef.current;
-      if (!demoSection) return;
-
-      const rect = demoSection.getBoundingClientRect();
-      const sectionTop = rect.top;
-      const sectionBottom = rect.bottom;
-      const viewportHeight = window.innerHeight;
-
-      const isFullyVisible = sectionTop <= 0 && sectionBottom >= viewportHeight;
-      const scrollingDown = e.deltaY > 0;
-      const scrollingUp = e.deltaY < 0;
-
-      // If we are not in the hijack zone, and the animation is not currently locked, do nothing.
-      if (!isFullyVisible && !isAnimationLocked) {
-        return;
-      }
-      // If scrolling up and we are at the very top of the animation,
-      // we should release the lock and allow native scrolling.
-      if (scrollingUp && demoAnimationProgress <= 0) {
-        if (isAnimationLocked) {
-          setIsAnimationLocked(false);
-          document.body.style.overflow = "";
-        }
-        // Let the native scroll handle it from here.
-        return;
-      }
-
-      // If scrolling down and we are at the very end of the animation,
-      // release the lock and allow native scrolling to continue to the next section.
-      if (scrollingDown && demoAnimationProgress >= 1) {
-        if (isAnimationLocked) {
-          setIsAnimationLocked(false);
-          document.body.style.overflow = "";
-          // Instead of jumping to the next section, scroll to the end of the current one.
-          const demoSection = demoSectionRef.current;
-          if (demoSection) {
-            window.scrollTo({
-              top:
-                demoSection.offsetTop +
-                demoSection.scrollHeight -
-                window.innerHeight,
-              behavior: "smooth",
-            });
-          }
-        }
-        // Let the native scroll handle it.
-        return;
-      }
-
-      // If we've reached this point, we are in the active animation zone.
-      // We should prevent the default scroll and control the animation.
-      e.preventDefault();
-
-      if (!isAnimationLocked) {
-        setIsAnimationLocked(true);
-        document.body.style.overflow = "hidden";
-      }
-
-      const normalizedDelta = e.deltaY * 0.002;
-
-      setAccumulatedDelta((prev) => {
-        const newDelta = prev + normalizedDelta;
-        const clampedDelta = Math.max(0, Math.min(1, newDelta));
-        setDemoAnimationProgress(clampedDelta);
-        return clampedDelta;
-      });
-    };
-
     const handleScroll = () => {
-      if (isAnimationLocked) return;
-
-      const currentScrollY = window.scrollY;
-      setScrollY(currentScrollY);
-
       const demoSection = demoSectionRef.current;
       if (!demoSection) return;
 
       const rect = demoSection.getBoundingClientRect();
       const sectionTop = rect.top;
-      const sectionBottom = rect.bottom;
       const viewportHeight = window.innerHeight;
 
-      // Check if we're approaching the demo section
-      const isApproaching =
-        sectionTop <= viewportHeight * 0.3 &&
-        sectionBottom >= viewportHeight * 0.7;
-      setIsApproachingDemo(isApproaching);
+      // The section is taller than the viewport to create a scrollable area for the animation.
+      // The animation duration is the difference between the section's height and the viewport's height.
+      const animationDuration = demoSection.scrollHeight - viewportHeight;
 
-      // Reset animation if we're not near the section
-      const isNearSection = sectionTop <= viewportHeight && sectionBottom >= 0;
+      // We calculate the progress of the scroll within the animation area.
+      // Progress starts at 0 when the top of the section reaches the top of the viewport,
+      // and goes to 1 when the bottom of the section reaches the bottom of the viewport.
+      const progress = -sectionTop / animationDuration;
 
-      if (!isNearSection) {
-        if (sectionBottom < 0) {
-          // We are past the section (scrolling down), so animation is complete
-          if (demoAnimationProgress < 1) {
-            setDemoAnimationProgress(1);
-            setAccumulatedDelta(1);
-          }
-        } else {
-          // We are before the section (scrolling up), so animation is at the start
-          if (demoAnimationProgress > 0) {
-            setDemoAnimationProgress(0);
-            setAccumulatedDelta(0);
-          }
-        }
-      }
+      const clampedProgress = Math.max(0, Math.min(1, progress));
+
+      setDemoAnimationProgress(clampedProgress);
     };
 
-    // Add passive: false to be able to preventDefault
-    window.addEventListener("wheel", handleWheel, { passive: false });
     window.addEventListener("scroll", handleScroll);
 
+    // Initial check in case the page loads inside the demo section
+    handleScroll();
+
     return () => {
-      window.removeEventListener("wheel", handleWheel);
       window.removeEventListener("scroll", handleScroll);
-      document.body.style.overflow = "";
     };
-  }, [isAnimationLocked, demoAnimationProgress]);
+  }, []);
 
   // Calculate which badges should be active based on animation progress
   const getBadgeVisibility = (progress: number) => {
@@ -350,15 +256,13 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Demo Section - Enhanced with scroll-hijacking */}
+      {/* Demo Section - Enhanced with scroll-based animation */}
       <section
         ref={demoSectionRef}
         id="demo-section"
-        className={`py-24 bg-gradient-to-br from-gray-50 to-purple-50 ${
-          isAnimationLocked ? "animation-active" : ""
-        } ${isApproachingDemo ? "approaching-demo" : ""}`}
+        className="py-24 bg-gradient-to-br from-gray-50 to-purple-50"
         style={{
-          minHeight: "200vh", // Make section taller to allow for scroll hijacking
+          minHeight: "200vh", // Taller section for scroll animation canvas
         }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 sticky top-16 md:top-8 flex h-[calc(100vh-4rem)] flex-col justify-center">
@@ -491,7 +395,7 @@ export default function Home() {
             </div>
 
             {/* Enhanced progress indicator */}
-            {isAnimationLocked && (
+            {demoAnimationProgress > 0 && demoAnimationProgress < 1 && (
               <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 hidden md:block">
                 <div className="bg-purple-600 text-white px-6 py-3 rounded-full text-sm font-semibold shadow-2xl">
                   <div className="flex items-center space-x-3">
