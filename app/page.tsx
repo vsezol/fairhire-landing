@@ -361,8 +361,8 @@ export default function Home() {
           minHeight: "200vh", // Make section taller to allow for scroll hijacking
         }}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 sticky top-16 flex h-[calc(100vh-4rem)] flex-col justify-center">
-          <div className="text-center mb-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 sticky top-16 md:top-8 flex h-[calc(100vh-4rem)] flex-col justify-center">
+          <div className="text-center mb-8 md:mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">
               Как работает FairHire
             </h2>
@@ -390,7 +390,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 justify-between items-center max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-2 justify-between items-center max-w-6xl mx-auto gap-8 md:gap-0">
               {/* Interviewer Side */}
               <div className="text-center relative">
                 <div
@@ -490,27 +490,13 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Mobile connection indicator */}
-            <div className="lg:hidden text-center mt-8">
-              <div
-                className={`inline-flex items-center space-x-2 bg-purple-600 text-white px-4 py-2 rounded-full ${
-                  badges.monitoring ? "animate-pulse" : ""
-                }`}
-              >
-                <span>📡</span>
-                <span className="text-sm font-semibold">
-                  Мониторинг в реальном времени
-                </span>
-              </div>
-            </div>
-
             {/* Enhanced progress indicator */}
             {isAnimationLocked && (
-              <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50">
+              <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 hidden md:block">
                 <div className="bg-purple-600 text-white px-6 py-3 rounded-full text-sm font-semibold shadow-2xl">
                   <div className="flex items-center space-x-3">
                     <span className="tabular-nums">
-                      Демонстрация: {paddedProgress}%
+                      Анимация: {paddedProgress}%
                     </span>
                     <div className="w-20 h-2 bg-purple-300 rounded-full overflow-hidden">
                       <div
@@ -544,7 +530,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-0 gap-y-8 md:gap-8">
             {technologies.map((tech, index) => (
               <div key={index} className="text-center group cursor-pointer">
                 <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl flex items-center justify-center text-4xl group-hover:from-purple-600 group-hover:to-purple-800 transition-all duration-300 transform group-hover:scale-110 group-hover:shadow-xl">
