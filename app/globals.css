@@ -210,8 +210,8 @@
 .badge-interviewer-4.active {
   --y0: 20px;
   --x0: 0px;
-  --y2: 0px;
-  --x2: 160px;
+  --y2: -10px;
+  --x2: 155px;
   --rotate: 3deg;
 
   transform: translate(var(--x2), var(--y2)) rotate(var(--rotate)) scale(1);
@@ -230,7 +230,7 @@
 .badge-candidate-2.active {
   --y0: 20px;
   --x0: 0px;
-  --y2: -10px;
+  --y2: -20px;
   --x2: -70px;
   --rotate: -20deg;
 
@@ -240,9 +240,9 @@
 .badge-candidate-3.active {
   --y0: 20px;
   --x0: 0px;
-  --y2: 20px;
-  --x2: -115px;
-  --rotate: 10deg;
+  --y2: 15px;
+  --x2: -120px;
+  --rotate: 20deg;
 
   transform: translate(var(--x2), var(--y2)) rotate(var(--rotate)) scale(1);
 }
@@ -251,8 +251,8 @@
   --y0: 20px;
   --x0: 0px;
   --y2: -20px;
-  --x2: 125px;
-  --rotate: -5deg;
+  --x2: 120px;
+  --rotate: -10deg;
 
   transform: translate(var(--x2), var(--y2)) rotate(var(--rotate)) scale(1);
 }

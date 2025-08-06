@@ -260,12 +260,12 @@ export default function Home() {
       <section
         ref={demoSectionRef}
         id="demo-section"
-        className="py-24 bg-gradient-to-br from-gray-50 to-purple-50"
+        className="py-32 md:py-24 bg-gradient-to-br from-gray-50 to-purple-50"
         style={{
-          minHeight: "200vh", // Taller section for scroll animation canvas
+          minHeight: "250vh", // Taller section for scroll animation canvas
         }}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 sticky top-16 md:top-8 flex h-[calc(100vh-4rem)] flex-col justify-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 sticky top-[-20px] md:top-8 flex h-[calc(100vh-4rem)] flex-col justify-center">
           <div className="text-center mb-8 md:mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">
               Как работает FairHire
