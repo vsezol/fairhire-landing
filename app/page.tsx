@@ -21,6 +21,7 @@ import {
   MapPin,
   ArrowRight,
   Play,
+  X,
 } from "lucide-react";
 
 export default function Home() {
@@ -175,6 +176,7 @@ export default function Home() {
       interviewer4: progress >= 0.75,
       connectionLine: progress >= 0.2,
       monitoring: progress >= 0.8,
+      connectionLost: progress >= 0.95,
     };
   };
 
@@ -377,7 +379,15 @@ export default function Home() {
                 className={`connection-line ${
                   badges.connectionLine ? "active" : ""
                 }`}
-              ></div>
+              >
+                <div
+                  className={`connection-break ${
+                    badges.connectionLost ? "active" : ""
+                  }`}
+                >
+                  <X className="w-6 h-6 text-red-500" />
+                </div>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 justify-between items-center max-w-6xl mx-auto">
