@@ -26,7 +26,13 @@ import {
 export default function Home() {
   const [scrollY, setScrollY] = useState(0);
   const [demoAnimationProgress, setDemoAnimationProgress] = useState(0);
+  const [isAnimationLocked, setIsAnimationLocked] = useState(false);
+  const [accumulatedDelta, setAccumulatedDelta] = useState(0);
+  const [isApproachingDemo, setIsApproachingDemo] = useState(false);
+
   const demoSectionRef = useRef<HTMLElement>(null);
+  const animationFrameRef = useRef<number>();
+  const lastScrollTimeRef = useRef<number>(0);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -36,7 +42,80 @@ export default function Home() {
   };
 
   useEffect(() => {
+    let isScrolling = false;
+
+    const handleWheel = (e: WheelEvent) => {
+      const demoSection = demoSectionRef.current;
+      if (!demoSection) return;
+
+      const rect = demoSection.getBoundingClientRect();
+      const sectionTop = rect.top;
+      const sectionBottom = rect.bottom;
+      const viewportHeight = window.innerHeight;
+
+      // Check if the demo section is fully visible in viewport
+      // Block scrolling only when the section is completely in view
+      const isFullyVisible = sectionTop <= 0 && sectionBottom >= viewportHeight;
+
+      // Also check if we're close to having it fully visible (for smooth transition)
+      const isNearlyFullyVisible =
+        sectionTop <= viewportHeight * 0.1 &&
+        sectionBottom >= viewportHeight * 0.9;
+
+      if (isFullyVisible || (isAnimationLocked && isNearlyFullyVisible)) {
+        // Prevent default scrolling
+        e.preventDefault();
+
+        if (!isAnimationLocked) {
+          setIsAnimationLocked(true);
+          document.body.style.overflow = "hidden";
+        }
+
+        // Accumulate scroll delta for smoother animation
+        const currentTime = Date.now();
+        const deltaTime = currentTime - lastScrollTimeRef.current;
+        lastScrollTimeRef.current = currentTime;
+
+        // Normalize wheel delta (different browsers/devices have different scales)
+        const normalizedDelta = e.deltaY * 0.002;
+
+        setAccumulatedDelta((prev) => {
+          const newDelta = prev + normalizedDelta;
+          const clampedDelta = Math.max(0, Math.min(1, newDelta));
+
+          // Update animation progress
+          setDemoAnimationProgress(clampedDelta);
+
+          // If animation is complete, unlock scrolling
+          if (clampedDelta >= 1 && !isScrolling) {
+            isScrolling = true;
+            setTimeout(() => {
+              setIsAnimationLocked(false);
+              document.body.style.overflow = "";
+
+              // Continue scrolling down
+              const nextSection = document.getElementById("technologies");
+              if (nextSection) {
+                nextSection.scrollIntoView({ behavior: "smooth" });
+              }
+              isScrolling = false;
+            }, 500);
+          }
+
+          return clampedDelta;
+        });
+      } else if (isAnimationLocked && sectionTop > viewportHeight * 0.2) {
+        // If we're above the section and trying to scroll up, unlock
+        setIsAnimationLocked(false);
+        setAccumulatedDelta(0);
+        setDemoAnimationProgress(0);
+        document.body.style.overflow = "";
+      }
+    };
+
     const handleScroll = () => {
+      if (isAnimationLocked) return;
+
       const currentScrollY = window.scrollY;
       setScrollY(currentScrollY);
 
@@ -44,33 +123,35 @@ export default function Home() {
       if (!demoSection) return;
 
       const rect = demoSection.getBoundingClientRect();
-      const sectionTop = currentScrollY + rect.top;
-      const sectionHeight = demoSection.offsetHeight;
+      const sectionTop = rect.top;
+      const sectionBottom = rect.bottom;
       const viewportHeight = window.innerHeight;
 
-      // Calculate if demo section is in view and how much
-      const sectionStart = sectionTop - viewportHeight;
-      const sectionEnd = sectionTop + sectionHeight;
+      // Check if we're approaching the demo section
+      const isApproaching =
+        sectionTop <= viewportHeight * 0.3 &&
+        sectionBottom >= viewportHeight * 0.7;
+      setIsApproachingDemo(isApproaching);
 
-      if (currentScrollY >= sectionStart && currentScrollY <= sectionEnd) {
-        // Calculate progress based on scroll position within the extended range
-        const totalRange = sectionHeight + viewportHeight;
-        const scrollWithinRange = currentScrollY - sectionStart;
-        const progress = Math.max(
-          0,
-          Math.min(1, scrollWithinRange / totalRange)
-        );
+      // Reset animation if we're not near the section
+      const isNearSection = sectionTop <= viewportHeight && sectionBottom >= 0;
 
-        setDemoAnimationProgress(progress);
-      } else {
-        // Reset animation when out of range
+      if (!isNearSection) {
         setDemoAnimationProgress(0);
+        setAccumulatedDelta(0);
       }
     };
 
+    // Add passive: false to be able to preventDefault
+    window.addEventListener("wheel", handleWheel, { passive: false });
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+
+    return () => {
+      window.removeEventListener("wheel", handleWheel);
+      window.removeEventListener("scroll", handleScroll);
+      document.body.style.overflow = "";
+    };
+  }, [isAnimationLocked]);
 
   // Calculate which badges should be active based on animation progress
   const getBadgeVisibility = (progress: number) => {
@@ -255,13 +336,18 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Demo Section */}
+      {/* Demo Section - Enhanced with scroll-hijacking */}
       <section
         ref={demoSectionRef}
         id="demo-section"
-        className="py-24 bg-gradient-to-br from-gray-50 to-purple-50"
+        className={`py-24 bg-gradient-to-br from-gray-50 to-purple-50 ${
+          isAnimationLocked ? "animation-active" : ""
+        } ${isApproachingDemo ? "approaching-demo" : ""}`}
+        style={{
+          minHeight: "200vh", // Make section taller to allow for scroll hijacking
+        }}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 sticky top-0 h-screen flex flex-col justify-center">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">
               Как работает FairHire
@@ -270,6 +356,18 @@ export default function Home() {
               Интервьюер в режиме реального времени отслеживает действия
               кандидата
             </p>
+
+            {/* Approaching demo indicator */}
+            {isApproachingDemo && !isAnimationLocked && (
+              <div className="mt-6 animate-bounce">
+                <div className="inline-flex items-center space-x-2 bg-purple-100 text-purple-700 px-4 py-2 rounded-full text-sm font-medium">
+                  <span>🎯</span>
+                  <span>
+                    Продолжайте скроллить для интерактивной демонстрации
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="relative">
@@ -400,8 +498,8 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Progress indicator only when animation is active */}
-            {demoAnimationProgress > 0 && demoAnimationProgress < 1 && (
+            {/* Enhanced progress indicator */}
+            {isAnimationLocked && (
               <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50">
                 <div className="bg-purple-600 text-white px-6 py-3 rounded-full text-sm font-semibold shadow-2xl">
                   <div className="flex items-center space-x-3">
@@ -414,6 +512,11 @@ export default function Home() {
                         style={{ width: `${demoAnimationProgress * 100}%` }}
                       ></div>
                     </div>
+                  </div>
+                  <div className="text-xs opacity-75 text-center mt-1">
+                    {demoAnimationProgress < 1
+                      ? "Прокручивайте для продолжения"
+                      : "Готово!"}
                   </div>
                 </div>
               </div>
