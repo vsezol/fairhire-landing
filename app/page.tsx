@@ -30,6 +30,7 @@ import { DemoRequestModal } from "@/components/demo-request-modal";
 export default function Home() {
   const { toast } = useToast();
   const [demoAnimationProgress, setDemoAnimationProgress] = useState(0);
+  const [hoveredFeature, setHoveredFeature] = useState<number | null>(null);
 
   const [contactForm, setContactForm] = useState({
     firstName: "",
@@ -137,6 +138,33 @@ export default function Home() {
     setIsSubmittingContact(false);
   };
 
+  const features = [
+    {
+      icon: <Users className="w-10 h-10 text-white" />,
+      title: "B2B решение",
+      description: "Для HR и технических интервьюеров",
+      position: { top: "22%", left: "20%" },
+    },
+    {
+      icon: <Monitor className="w-10 h-10 text-white" />,
+      title: "Мультиплатформа",
+      description: "MacOS и Windows поддержка",
+      position: { top: "120%", left: "80%" },
+    },
+    {
+      icon: <Shield className="w-10 h-10 text-white" />,
+      title: "Мониторинг",
+      description: "Отслеживание всех действий кандидата",
+      position: { top: "20%", left: "80%" },
+    },
+    {
+      icon: <CheckCircle className="w-10 h-10 text-white" />,
+      title: "Честная оценка",
+      description: "Объективные данные для принятия решений",
+      position: { top: "125%", left: "20%" },
+    },
+  ];
+
   const technologies = [
     { name: "Google Meet", icon: "🎥" },
     { name: "Zoom", icon: "📹" },
@@ -235,7 +263,7 @@ export default function Home() {
         id="hero"
         className="pt-24 pb-16 bg-gradient-to-br from-purple-50 via-white to-purple-50"
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center max-w-4xl mx-auto">
             <h1 className="text-4xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-purple-600 via-purple-700 to-purple-800 bg-clip-text text-transparent leading-tight">
               Честные собеседования
@@ -266,32 +294,36 @@ export default function Home() {
               </Button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-purple-800 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Users className="w-8 h-8 text-white" />
+            <div
+              className={`hidden lg:block ${
+                hoveredFeature !== null ? "has-hovered-feature" : ""
+              }`}
+              onMouseLeave={() => setHoveredFeature(null)}
+            >
+              {features.map((feature, index) => (
+                <div
+                  key={index}
+                  className={`feature-orb-container ${
+                    hoveredFeature === index ? "focused" : ""
+                  }`}
+                  style={
+                    {
+                      top: feature.position.top,
+                      left: feature.position.left,
+                      animationDelay: `${index * 1.2}s`,
+                    } as React.CSSProperties
+                  }
+                  onMouseEnter={() => setHoveredFeature(index)}
+                >
+                  <div className="feature-orb">{feature.icon}</div>
+                  <div className="feature-text-content">
+                    <h3 className="text-xl font-bold mb-2 text-gray-900">
+                      {feature.title}
+                    </h3>
+                    <p className="text-gray-600">{feature.description}</p>
+                  </div>
                 </div>
-                <h3 className="text-xl font-semibold mb-2">B2B решение</h3>
-                <p className="text-gray-600">
-                  Для HR и технических интервьюеров
-                </p>
-              </div>
-              <div className="text-center">
-                <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-purple-800 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Monitor className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-xl font-semibold mb-2">Мультиплатформа</h3>
-                <p className="text-gray-600">MacOS и Windows поддержка</p>
-              </div>
-              <div className="text-center">
-                <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-purple-800 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Shield className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-xl font-semibold mb-2">Мониторинг</h3>
-                <p className="text-gray-600">
-                  Отслеживание всех действий кандидата
-                </p>
-              </div>
+              ))}
             </div>
           </div>
         </div>

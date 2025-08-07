@@ -421,3 +421,69 @@ html {
 ::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(135deg, #7c3aed, #6366f1);
 }
+
+.feature-orb-container {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: 100px;
+  transform: translate(-50%, -50%);
+  animation: float 6s ease-in-out infinite;
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 20;
+}
+
+.feature-orb {
+  width: 100px;
+  height: 100px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(145deg, #a855f7, #7c3aed);
+  box-shadow: 0 10px 30px rgba(124, 58, 237, 0.3);
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  cursor: pointer;
+}
+
+.feature-text-content {
+  opacity: 0;
+  text-align: center;
+  width: 200px;
+  position: absolute;
+  top: 120px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.has-hovered-feature .feature-orb-container:not(.focused) {
+  filter: blur(4px);
+  transform: translate(-50%, -50%) scale(0.9);
+  opacity: 0.7;
+}
+
+.feature-orb-container.focused {
+  transform: translate(-50%, -50%) scale(1.1);
+  animation-play-state: paused;
+  z-index: 21;
+}
+
+.feature-orb-container.focused .feature-text-content {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+@keyframes float {
+  0% {
+    transform: translate(-50%, -50%) translateY(0px);
+  }
+  50% {
+    transform: translate(-50%, -50%) translateY(-20px);
+  }
+  100% {
+    transform: translate(-50%, -50%) translateY(0px);
+  }
+}
