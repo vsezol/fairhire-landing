@@ -141,7 +141,7 @@ export default function Home() {
     { name: "Google Meet", icon: "🎥" },
     { name: "Zoom", icon: "📹" },
     { name: "Jitsi Meet", icon: "💻" },
-    { name: "Salut Jazz", icon: "🎵" },
+    { name: "SaluteJazz", icon: "🎵" },
     { name: "Yandex Code", icon: "⚡" },
     { name: "KTalk", icon: "💬" },
   ];
@@ -200,12 +200,6 @@ export default function Home() {
                 Как работает
               </button>
               <button
-                onClick={() => scrollToSection("technologies")}
-                className="text-gray-700 hover:text-purple-600 transition-colors font-medium"
-              >
-                Технологии
-              </button>
-              <button
                 onClick={() => scrollToSection("benefits")}
                 className="text-gray-700 hover:text-purple-600 transition-colors font-medium"
               >
@@ -243,12 +237,12 @@ export default function Home() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-purple-600 via-purple-700 to-purple-800 bg-clip-text text-transparent leading-tight">
+            <h1 className="text-4xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-purple-600 via-purple-700 to-purple-800 bg-clip-text text-transparent leading-tight">
               Честные собеседования
               <br />
               без обмана
             </h1>
-            <p className="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed">
+            <p className="text-lg md:text-2xl text-gray-600 mb-8 leading-relaxed">
               FairHire обеспечивает прозрачность интервью, отслеживая действия
               кандидата в режиме реального времени и предотвращая списывание
             </p>
@@ -469,7 +463,7 @@ export default function Home() {
       </section>
 
       {/* Technologies Section */}
-      <section id="technologies" className="py-24 bg-white">
+      <section id="technologies" className="py-24 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">
@@ -480,21 +474,43 @@ export default function Home() {
               проведения интервью
             </p>
           </div>
+        </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-0 gap-y-8 md:gap-8">
-            {technologies.map((tech, index) => (
-              <div key={index} className="text-center group cursor-pointer">
-                <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl flex items-center justify-center text-4xl group-hover:from-purple-600 group-hover:to-purple-800 transition-all duration-300 transform group-hover:scale-110 group-hover:shadow-xl">
-                  <span className="group-hover:grayscale-0 group-hover:text-white transition-all duration-300">
-                    {tech.icon}
-                  </span>
+        <div className="relative flex flex-col gap-8 ">
+          {[
+            [...technologies, ...technologies],
+            [...technologies, ...technologies].reverse(),
+          ].map((row, rowIndex) => {
+            const duplicatedRow = [...row, ...row];
+            return (
+              <div
+                key={rowIndex}
+                className={`flex items-center space-x-8 scale-x-110 ${
+                  rowIndex === 0 ? "-rotate-[5deg]" : "-rotate-[5deg]"
+                }`}
+              >
+                <div
+                  className={`flex selection:shrink-0 items-center space-x-8  ${
+                    rowIndex % 2 ? "animate-marquee" : "animate-marquee2"
+                  }`}
+                >
+                  {duplicatedRow.map((tech, index) => (
+                    <div
+                      key={`${tech.name}-${index}`}
+                      className="flex items-center justify-center space-x-2 shrink-0 bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl mix-blend-multiply px-4 h-[80px] max-h-[80px]"
+                    >
+                      <div className="w-8 h-8 p-2 rounded-lg flex items-center justify-center text-3xl">
+                        <span>{tech.icon}</span>
+                      </div>
+                      <p className="font-semibold text-lg text-gray-800">
+                        {tech.name}
+                      </p>
+                    </div>
+                  ))}
                 </div>
-                <p className="font-semibold text-gray-700 group-hover:text-purple-600 transition-colors">
-                  {tech.name}
-                </p>
               </div>
-            ))}
-          </div>
+            );
+          })}
         </div>
       </section>
 
@@ -537,24 +553,23 @@ export default function Home() {
 
           <div className="bg-gradient-to-r from-purple-600 to-purple-800 rounded-3xl p-12 text-center text-white">
             <h3 className="text-3xl md:text-4xl font-bold mb-6">
-              Увеличьте эффективность найма на 85%
+              Увеличьте эффективность найма на 45%
             </h3>
             <p className="text-xl mb-8 opacity-90 max-w-3xl mx-auto">
-              Исследования показывают, что использование FairHire снижает
-              количество некачественных кандидатов на 85% и повышает точность
-              оценки технических навыков на 92%.
+              FairHire снижает количество недобросовестных кандидатов и повышает
+              точность оценки навыков кандидатов.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div>
-                <div className="text-4xl font-bold mb-2">85%</div>
+                <div className="text-4xl font-bold mb-2">90%</div>
                 <p className="opacity-90">Снижение обмана</p>
               </div>
               <div>
-                <div className="text-4xl font-bold mb-2">92%</div>
+                <div className="text-4xl font-bold mb-2">95%</div>
                 <p className="opacity-90">Точность оценки</p>
               </div>
               <div>
-                <div className="text-4xl font-bold mb-2">3x</div>
+                <div className="text-4xl font-bold mb-2">1.5x</div>
                 <p className="opacity-90">Быстрее найм</p>
               </div>
             </div>
@@ -570,22 +585,21 @@ export default function Home() {
               Начните использовать FairHire
             </h2>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              Выберите вашу роль и скачайте соответствующее приложение.
-              Настройка займет менее 2 минут.
+              Выберите вашу роль и воспользуйтесь одним из наших приложений.
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* For Interviewer */}
-            <Card className="bg-gradient-to-br from-purple-800 to-purple-900 border-0 text-white p-8">
+            <Card className="bg-gradient-to-br from-purple-800 to-purple-900 border-0 text-white p-4 md:p-8">
               <CardContent className="text-center">
                 <div className="w-24 h-24 mx-auto mb-6 bg-white/20 rounded-full flex items-center justify-center">
                   <Users className="w-12 h-12 text-white" />
                 </div>
                 <h3 className="text-3xl font-bold mb-4">Для интервьюеров</h3>
                 <p className="text-lg text-purple-100 mb-8">
-                  Получите полный контроль над процессом собеседования.
-                  Отслеживайте действия кандидатов в режиме реального времени.
+                  Контролируйте процесс собеседования. Отслеживайте действия
+                  кандидатов в режиме реального времени.
                 </p>
                 <ul className="text-left space-y-3 mb-8 text-purple-100">
                   <li className="flex items-center">
@@ -606,13 +620,13 @@ export default function Home() {
                   className="w-full bg-white text-purple-800 hover:bg-gray-100 font-bold text-lg py-4 rounded-xl transform hover:scale-105 transition-all duration-300 shadow-xl"
                 >
                   <Eye className="w-5 h-5 mr-2" />
-                  Открыть панель мониторинга
+                  Панель мониторинга
                 </Button>
               </CardContent>
             </Card>
 
             {/* For Candidate */}
-            <Card className="bg-gradient-to-br from-blue-800 to-blue-900 border-0 text-white p-8">
+            <Card className="bg-gradient-to-br from-blue-800 to-blue-900 border-0 text-white p-4 md:p-8">
               <CardContent className="text-center">
                 <div className="w-24 h-24 mx-auto mb-6 bg-white/20 rounded-full flex items-center justify-center">
                   <Monitor className="w-12 h-12 text-white" />
@@ -636,44 +650,24 @@ export default function Home() {
                     Поддержка всех платформ
                   </li>
                 </ul>
-                <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4 items-center justify-center">
                   <Button
                     size="lg"
                     className="w-full bg-white text-blue-800 hover:bg-gray-100 font-bold text-lg py-4 rounded-xl transform hover:scale-105 transition-all duration-300 shadow-xl"
                   >
                     <Download className="w-5 h-5 mr-2" />
-                    Скачать для macOS
+                    MacOS App
                   </Button>
                   <Button
                     size="lg"
                     className="w-full bg-white text-blue-800 hover:bg-gray-100 font-bold text-lg py-4 rounded-xl transform hover:scale-105 transition-all duration-300 shadow-xl"
                   >
                     <Download className="w-5 h-5 mr-2" />
-                    Скачать для Windows
+                    Windows App
                   </Button>
                 </div>
               </CardContent>
             </Card>
-          </div>
-
-          <div className="text-center mt-16">
-            <p className="text-gray-400 mb-4">Системные требования:</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-              <div className="bg-gray-800 rounded-lg p-6">
-                <h4 className="font-bold text-lg mb-3">macOS</h4>
-                <p className="text-gray-300">macOS 10.15 или новее</p>
-                <p className="text-gray-300">
-                  4 ГБ RAM, 100 МБ свободного места
-                </p>
-              </div>
-              <div className="bg-gray-800 rounded-lg p-6">
-                <h4 className="font-bold text-lg mb-3">Windows</h4>
-                <p className="text-gray-300">Windows 10 или новее</p>
-                <p className="text-gray-300">
-                  4 ГБ RAM, 100 МБ свободного места
-                </p>
-              </div>
-            </div>
           </div>
         </div>
       </section>
@@ -689,7 +683,7 @@ export default function Home() {
               Связаться с нами
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Есть вопросы о FairHire? Хотите персональную демонстрацию? Мы
+              Есть вопросы по FairHire? Хотите персональную демонстрацию? Мы
               поможем интегрировать решение в ваш процесс найма.
             </p>
           </div>
