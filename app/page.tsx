@@ -294,6 +294,34 @@ export default function Home() {
               </Button>
             </div>
 
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16 lg:hidden">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-purple-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Users className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-xl font-semibold mb-2">B2B решение</h3>
+                <p className="text-gray-600">
+                  Для HR и технических интервьюеров
+                </p>
+              </div>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-purple-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Monitor className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-xl font-semibold mb-2">Мультиплатформа</h3>
+                <p className="text-gray-600">MacOS и Windows поддержка</p>
+              </div>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-purple-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Shield className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-xl font-semibold mb-2">Мониторинг</h3>
+                <p className="text-gray-600">
+                  Отслеживание всех действий кандидата
+                </p>
+              </div>
+            </div>
+
             <div
               className={`hidden lg:block ${
                 hoveredFeature !== null ? "has-hovered-feature" : ""
