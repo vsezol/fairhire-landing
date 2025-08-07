@@ -23,9 +23,20 @@ import {
   Play,
   X,
 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/lib/supabase";
+import { DemoRequestModal } from "@/components/demo-request-modal";
 
 export default function Home() {
+  const { toast } = useToast();
   const [demoAnimationProgress, setDemoAnimationProgress] = useState(0);
+
+  const [contactForm, setContactForm] = useState({
+    firstName: "",
+    email: "",
+  });
+  const [isSubmittingContact, setIsSubmittingContact] = useState(false);
+  const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
 
   const demoSectionRef = useRef<HTMLElement>(null);
 
@@ -90,6 +101,41 @@ export default function Home() {
 
   const progress = Math.round(demoAnimationProgress * 100);
   const paddedProgress = String(progress).padStart(3, "\u00A0");
+
+  const handleContactChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setContactForm((prev) => ({ ...prev, [id]: value }));
+  };
+
+  const handleContactSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmittingContact(true);
+
+    const { error } = await supabase.from("contacts").insert([
+      {
+        first_name: contactForm.firstName,
+        email: contactForm.email,
+      },
+    ]);
+
+    if (error) {
+      toast({
+        title: "Ошибка!",
+        description: "Не удалось отправить сообщение. Попробуйте снова.",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Успешно!",
+        description: "Ваше сообщение отправлено.",
+      });
+      setContactForm({
+        firstName: "",
+        email: "",
+      });
+    }
+    setIsSubmittingContact(false);
+  };
 
   const technologies = [
     { name: "Google Meet", icon: "🎥" },
@@ -203,9 +249,8 @@ export default function Home() {
               без обмана
             </h1>
             <p className="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed">
-              FairHire обеспечивает прозрачность технических интервью,
-              отслеживая действия кандидата в режиме реального времени и
-              предотвращая списывание
+              FairHire обеспечивает прозрачность интервью, отслеживая действия
+              кандидата в режиме реального времени и предотвращая списывание
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
               <Button
@@ -242,14 +287,16 @@ export default function Home() {
                   <Monitor className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="text-xl font-semibold mb-2">Мультиплатформа</h3>
-                <p className="text-gray-600">macOS и Windows поддержка</p>
+                <p className="text-gray-600">MacOS и Windows поддержка</p>
               </div>
               <div className="text-center">
                 <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-purple-800 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Shield className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2">100% защита</h3>
-                <p className="text-gray-600">Невозможность списывания</p>
+                <h3 className="text-xl font-semibold mb-2">Мониторинг</h3>
+                <p className="text-gray-600">
+                  Отслеживание всех действий кандидата
+                </p>
               </div>
             </div>
           </div>
@@ -652,8 +699,8 @@ export default function Home() {
               <h3 className="text-2xl font-bold mb-8 text-gray-900">
                 Отправьте сообщение
               </h3>
-              <form className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <form className="space-y-6" onSubmit={handleContactSubmit}>
+                <div className="space-y-6">
                   <div>
                     <label
                       htmlFor="firstName"
@@ -666,133 +713,58 @@ export default function Home() {
                       type="text"
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
                       placeholder="Ваше имя"
+                      value={contactForm.firstName}
+                      onChange={handleContactChange}
+                      required
                     />
                   </div>
                   <div>
                     <label
-                      htmlFor="lastName"
+                      htmlFor="email"
                       className="block text-sm font-medium text-gray-700 mb-2"
                     >
-                      Фамилия
+                      Email
                     </label>
                     <Input
-                      id="lastName"
-                      type="text"
+                      id="email"
+                      type="email"
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-                      placeholder="Ваша фамилия"
+                      placeholder="your@company.com"
+                      value={contactForm.email}
+                      onChange={handleContactChange}
+                      required
                     />
                   </div>
-                </div>
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    Email
-                  </label>
-                  <Input
-                    id="email"
-                    type="email"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-                    placeholder="your@company.com"
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="company"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    Компания
-                  </label>
-                  <Input
-                    id="company"
-                    type="text"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-                    placeholder="Название компании"
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="message"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    Сообщение
-                  </label>
-                  <Textarea
-                    id="message"
-                    rows={5}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-                    placeholder="Расскажите о ваших потребностях в области найма..."
-                  />
                 </div>
                 <Button
                   type="submit"
                   size="lg"
                   className="w-full bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white py-4 rounded-xl font-semibold text-lg transform hover:scale-105 transition-all duration-300 shadow-xl"
+                  disabled={isSubmittingContact}
                 >
-                  Отправить сообщение
-                  <ArrowRight className="w-5 h-5 ml-2" />
+                  {isSubmittingContact ? "Отправка..." : "Отправить сообщение"}
+                  {!isSubmittingContact && (
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  )}
                 </Button>
               </form>
             </div>
 
-            <div className="space-y-8">
-              <div>
-                <h3 className="text-2xl font-bold mb-8 text-gray-900">
-                  Наши контакты
-                </h3>
-                <div className="space-y-6">
-                  <div className="flex items-start space-x-4">
-                    <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-purple-800 rounded-lg flex items-center justify-center">
-                      <Mail className="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900 mb-1">
-                        Email
-                      </h4>
-                      <p className="text-gray-600">hello@fairhire.com</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start space-x-4">
-                    <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-purple-800 rounded-lg flex items-center justify-center">
-                      <Phone className="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900 mb-1">
-                        Телефон
-                      </h4>
-                      <p className="text-gray-600">+7 (495) 123-45-67</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start space-x-4">
-                    <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-purple-800 rounded-lg flex items-center justify-center">
-                      <MapPin className="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900 mb-1">Офис</h4>
-                      <p className="text-gray-600">Москва, Россия</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-gradient-to-r from-purple-600 to-purple-800 rounded-2xl p-8 text-white">
-                <h4 className="text-xl font-bold mb-4">
-                  Нужна персональная демонстрация?
-                </h4>
-                <p className="mb-6 opacity-90">
-                  Забронируйте 30-минутную персональную демонстрацию FairHire и
-                  узнайте, как мы можем улучшить ваш процесс найма.
-                </p>
-                <Button
-                  variant="secondary"
-                  className="bg-white text-purple-800 hover:bg-gray-100 font-semibold px-6 py-3 rounded-lg"
-                >
-                  Забронировать демо
-                </Button>
-              </div>
+            <div className="bg-gradient-to-r from-purple-600 to-purple-800 rounded-2xl p-8 text-white flex flex-col justify-center">
+              <h4 className="text-xl font-bold mb-4">
+                Нужна персональная демонстрация?
+              </h4>
+              <p className="mb-6 opacity-90">
+                Забронируйте 30-минутную персональную демонстрацию FairHire и
+                узнайте, как мы можем улучшить ваш процесс найма.
+              </p>
+              <Button
+                variant="secondary"
+                className="bg-white text-purple-800 hover:bg-gray-100 font-semibold px-6 py-3 rounded-lg w-full"
+                onClick={() => setIsDemoModalOpen(true)}
+              >
+                Забронировать демо
+              </Button>
             </div>
           </div>
         </div>
@@ -811,12 +783,11 @@ export default function Home() {
                   FairHire
                 </span>
               </div>
-              <p className="text-gray-300 mb-6 max-w-md">
-                Революционное решение для проведения честных технических
-                интервью. Повысьте качество найма с помощью передовых технологий
-                мониторинга.
+              <p className="text-gray-300 max-w-md">
+                Революционное решение для проведения честных интервью. Повысьте
+                качество найма с помощью передовых технологий мониторинга.
               </p>
-              <div className="flex space-x-4">
+              {/* <div className="flex space-x-4">
                 <div className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-purple-600 transition-colors cursor-pointer">
                   <span className="text-sm">f</span>
                 </div>
@@ -826,80 +797,30 @@ export default function Home() {
                 <div className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-purple-600 transition-colors cursor-pointer">
                   <span className="text-sm">in</span>
                 </div>
-              </div>
+              </div> */}
             </div>
 
-            <div>
-              <h4 className="font-bold text-lg mb-4">Продукт</h4>
-              <ul className="space-y-3 text-gray-300">
-                <li>
-                  <a
-                    href="#"
-                    className="hover:text-purple-400 transition-colors"
-                  >
-                    Возможности
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="hover:text-purple-400 transition-colors"
-                  >
-                    Цены
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="hover:text-purple-400 transition-colors"
-                  >
-                    Интеграции
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="hover:text-purple-400 transition-colors"
-                  >
-                    API
-                  </a>
-                </li>
-              </ul>
-            </div>
+            <div></div>
 
             <div>
-              <h4 className="font-bold text-lg mb-4">Поддержка</h4>
-              <ul className="space-y-3 text-gray-300">
-                <li>
+              <h4 className="font-bold text-lg mb-4">Наши контакты</h4>
+              <ul className="space-y-4 text-gray-300">
+                <li className="flex items-center space-x-3">
+                  <Mail className="w-5 h-5 text-purple-400" />
                   <a
-                    href="#"
+                    href="mailto:hello@fairhire.com"
                     className="hover:text-purple-400 transition-colors"
                   >
-                    Документация
+                    vsezold@gmail.com
                   </a>
                 </li>
-                <li>
+                <li className="flex items-center space-x-3">
+                  <Phone className="w-5 h-5 text-purple-400" />
                   <a
-                    href="#"
+                    href="tel:+74951234567"
                     className="hover:text-purple-400 transition-colors"
                   >
-                    FAQ
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="hover:text-purple-400 transition-colors"
-                  >
-                    Контакты
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="hover:text-purple-400 transition-colors"
-                  >
-                    Статус системы
+                    +7 (923) 652-35-42
                   </a>
                 </li>
               </ul>
@@ -908,22 +829,15 @@ export default function Home() {
 
           <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm">
-              © 2024 FairHire. Все права защищены.
+              © 2025 FairHire. Все права защищены.
             </p>
-            <div className="flex space-x-6 mt-4 md:mt-0 text-sm text-gray-400">
-              <a href="#" className="hover:text-purple-400 transition-colors">
-                Политика конфиденциальности
-              </a>
-              <a href="#" className="hover:text-purple-400 transition-colors">
-                Условия использования
-              </a>
-              <a href="#" className="hover:text-purple-400 transition-colors">
-                Cookies
-              </a>
-            </div>
           </div>
         </div>
       </footer>
+      <DemoRequestModal
+        isOpen={isDemoModalOpen}
+        onClose={() => setIsDemoModalOpen(false)}
+      />
     </div>
   );
 }
