@@ -143,25 +143,25 @@ export default function Home() {
       icon: <Users className="w-10 h-10 text-white" />,
       title: "B2B решение",
       description: "Для HR и технических интервьюеров",
-      position: { top: "22%", left: "20%" },
+      position: { top: "12%", left: "20%" },
     },
     {
       icon: <Monitor className="w-10 h-10 text-white" />,
       title: "Мультиплатформа",
       description: "MacOS и Windows поддержка",
-      position: { top: "120%", left: "80%" },
+      position: { top: "110%", left: "80%" },
     },
     {
       icon: <Shield className="w-10 h-10 text-white" />,
       title: "Мониторинг",
       description: "Отслеживание всех действий кандидата",
-      position: { top: "20%", left: "80%" },
+      position: { top: "10%", left: "80%" },
     },
     {
       icon: <CheckCircle className="w-10 h-10 text-white" />,
       title: "Честная оценка",
       description: "Объективные данные для принятия решений",
-      position: { top: "125%", left: "20%" },
+      position: { top: "108%", left: "20%" },
     },
   ];
 
@@ -261,7 +261,7 @@ export default function Home() {
       {/* Hero Section */}
       <section
         id="hero"
-        className="pt-24 pb-16 bg-gradient-to-br from-purple-50 via-white to-purple-50"
+        className="pt-24 lg:pt-40 pb-16 bg-gradient-to-br from-purple-50 via-white to-purple-50"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center max-w-4xl mx-auto">
