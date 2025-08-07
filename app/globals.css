@@ -446,6 +446,20 @@ html {
   box-shadow: 0 10px 30px rgba(124, 58, 237, 0.3);
   transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   cursor: pointer;
+  position: relative;
+  animation: rotate-orb 8s ease-in-out infinite;
+  animation-delay: inherit;
+}
+
+.feature-orb::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 3px solid rgba(168, 85, 247, 0.5);
+  animation: wave 2.5s ease-out infinite;
+  animation-delay: inherit;
+  z-index: -1;
 }
 
 .feature-text-content {
@@ -474,6 +488,27 @@ html {
 .feature-orb-container.focused .feature-text-content {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
+}
+
+@keyframes rotate-orb {
+  0%,
+  100% {
+    transform: rotate(-10deg);
+  }
+  50% {
+    transform: rotate(10deg);
+  }
+}
+
+@keyframes wave {
+  from {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  to {
+    transform: scale(1.6);
+    opacity: 0;
+  }
 }
 
 @keyframes float {
