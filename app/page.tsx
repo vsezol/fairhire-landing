@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Shield,
@@ -22,6 +22,8 @@ import {
   ArrowRight,
   Play,
   X,
+  Github,
+  Heart,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
@@ -143,25 +145,25 @@ export default function Home() {
       icon: <Users className="w-10 h-10 text-white" />,
       title: "B2B решение",
       description: "Для HR и технических интервьюеров",
-      position: { top: "12%", left: "20%" },
+      position: { top: "-10%", left: "-5%" },
     },
     {
       icon: <Monitor className="w-10 h-10 text-white" />,
       title: "Мультиплатформа",
       description: "MacOS и Windows поддержка",
-      position: { top: "110%", left: "80%" },
+      position: { top: "105%", left: "105%" },
     },
     {
       icon: <Shield className="w-10 h-10 text-white" />,
       title: "Мониторинг",
       description: "Отслеживание всех действий кандидата",
-      position: { top: "10%", left: "80%" },
+      position: { top: "-10%", left: "105%" },
     },
     {
       icon: <CheckCircle className="w-10 h-10 text-white" />,
       title: "Честная оценка",
       description: "Объективные данные для принятия решений",
-      position: { top: "108%", left: "20%" },
+      position: { top: "105%", left: "-5%" },
     },
   ];
 
@@ -214,7 +216,7 @@ export default function Home() {
               </span>
             </div>
 
-            <nav className="hidden md:flex space-x-8">
+            <nav className="hidden lg:flex space-x-8">
               <button
                 onClick={() => scrollToSection("hero")}
                 className="text-gray-700 hover:text-purple-600 transition-colors font-medium"
@@ -245,15 +247,41 @@ export default function Home() {
               >
                 Контакты
               </button>
+              <button
+                onClick={() => scrollToSection("support")}
+                className="text-gray-700 hover:text-purple-600 transition-colors font-medium"
+              >
+                Поддержать
+              </button>
             </nav>
 
-            <Button
-              onClick={() => scrollToSection("download")}
-              className="bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 transform hover:scale-105"
-            >
-              Попробовать
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
+            <div className="flex items-center space-x-4">
+              <a
+                href="https://github.com/vsezol/fairhire"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-700 hover:text-purple-600 transition-colors"
+              >
+                <Github className="w-6 h-6" />
+              </a>
+
+              <a
+                href="https://boosty.to/vsezold"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-700 hover:text-orange-500 transition-colors pr-2"
+              >
+                <Heart className="w-6 h-6" />
+              </a>
+
+              <Button
+                onClick={() => scrollToSection("download")}
+                className="bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 transform hover:scale-105"
+              >
+                Попробовать
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </div>
           </div>
         </div>
       </header>
@@ -261,7 +289,7 @@ export default function Home() {
       {/* Hero Section */}
       <section
         id="hero"
-        className="pt-24 lg:pt-40 pb-16 bg-gradient-to-br from-purple-50 via-white to-purple-50"
+        className="pt-24 pb-16 bg-gradient-to-br from-purple-50 via-white to-purple-50 lg:h-[100vh] lg:flex lg:items-center lg:pt-0 lg:pb-0"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center max-w-4xl mx-auto">
@@ -284,13 +312,19 @@ export default function Home() {
                 Скачать FairHire
               </Button>
               <Button
-                onClick={() => scrollToSection("demo-section")}
                 variant="outline"
                 size="lg"
+                asChild
                 className="border-2 border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300"
               >
-                <Play className="w-5 h-5 mr-2" />
-                Посмотреть демо
+                <a
+                  href="https://boosty.to/vsezold/posts/5e4b81d4-9a6b-4ded-b9c0-07874349a179?share=post_link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Play className="w-5 h-5 mr-2" />
+                  Посмотреть демо
+                </a>
               </Button>
             </div>
 
@@ -712,18 +746,30 @@ export default function Home() {
                 </ul>
                 <div className="grid grid-cols-2 gap-4 items-center justify-center">
                   <Button
+                    asChild
                     size="lg"
                     className="w-full bg-white text-blue-800 hover:bg-gray-100 font-bold text-lg py-4 rounded-xl transform hover:scale-105 transition-all duration-300 shadow-xl"
                   >
-                    <Download className="w-5 h-5 mr-2" />
-                    MacOS App
+                    <a
+                      href="https://7a7lrn6qmd58vdze.public.blob.vercel-storage.com/FairHire.dmg"
+                      download="FairHire.dmg"
+                    >
+                      <Download className="w-5 h-5 mr-2" />
+                      MacOS App
+                    </a>
                   </Button>
                   <Button
+                    asChild
                     size="lg"
                     className="w-full bg-white text-blue-800 hover:bg-gray-100 font-bold text-lg py-4 rounded-xl transform hover:scale-105 transition-all duration-300 shadow-xl"
                   >
-                    <Download className="w-5 h-5 mr-2" />
-                    Windows App
+                    <a
+                      href="https://7a7lrn6qmd58vdze.public.blob.vercel-storage.com/FairHire%20Setup.exe"
+                      download="FairHire Setup.exe"
+                    >
+                      <Download className="w-5 h-5 mr-2" />
+                      Windows App
+                    </a>
                   </Button>
                 </div>
               </CardContent>
@@ -824,6 +870,111 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Support Developer Section */}
+      <section
+        id="support"
+        className="py-24 bg-gradient-to-br from-orange-50 via-white to-orange-50"
+      >
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">
+              Поддержать разработчика
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              FairHire создается одним разработчиком. Ваша поддержка помогает
+              развивать проект и добавлять новые функции.
+            </p>
+          </div>
+
+          <div className="bg-white rounded-3xl shadow-sm p-6 md:p-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div className="text-center lg:text-left">
+                <div className="flex justify-center lg:justify-start mb-6">
+                  <Image
+                    src="/developer.jpeg"
+                    alt="Всеволод Золотов"
+                    width={128}
+                    height={128}
+                    className="w-32 h-32 rounded-full shadow-lg rounded-full bg-gradient-to-r from-orange-300 to-orange-400 p-1"
+                  />
+                </div>
+                <h3 className="text-2xl font-bold mb-4 text-gray-900">
+                  Всеволод Золотов
+                </h3>
+                <p className="text-gray-600 mb-6 leading-relaxed">
+                  Senior Software Engineer и Спикер. Создаю инновационные
+                  решения для HR-сферы. FairHire — проект для решения проблемы
+                  собеседований в IT.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                  <Button
+                    asChild
+                    size="lg"
+                    className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-xl"
+                  >
+                    <a
+                      href="https://t.me/lifeindev"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <svg
+                        className="w-5 h-5 mr-2"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
+                      </svg>
+                      Телеграм канал
+                    </a>
+                  </Button>
+
+                  <Button
+                    asChild
+                    size="lg"
+                    className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-xl"
+                  >
+                    <a
+                      href="https://boosty.to/vsezold"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Heart className="w-5 h-5 mr-2" />
+                      Поддержать
+                    </a>
+                  </Button>
+                </div>
+              </div>
+
+              <div className="text-center">
+                <div className="bg-gradient-to-br from-orange-100 to-orange-200 rounded-2xl p-8">
+                  <h4 className="text-xl font-bold mb-4 text-gray-900">
+                    Почему поддержка важна?
+                  </h4>
+                  <ul className="text-left space-y-3 text-gray-700">
+                    <li className="flex items-start">
+                      <CheckCircle className="w-5 h-5 mr-3 text-orange-500 mt-0.5 shrink-0" />
+                      <span>Развитие новых функций мониторинга</span>
+                    </li>
+                    <li className="flex items-start">
+                      <CheckCircle className="w-5 h-5 mr-3 text-orange-500 mt-0.5 shrink-0" />
+                      <span>Поддержка большего количества платформ</span>
+                    </li>
+                    <li className="flex items-start">
+                      <CheckCircle className="w-5 h-5 mr-3 text-orange-500 mt-0.5 shrink-0" />
+                      <span>Улучшение пользовательского опыта</span>
+                    </li>
+                    <li className="flex items-start">
+                      <CheckCircle className="w-5 h-5 mr-3 text-orange-500 mt-0.5 shrink-0" />
+                      <span>Бесплатное использование для всех</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -837,21 +988,42 @@ export default function Home() {
                   FairHire
                 </span>
               </div>
-              <p className="text-gray-300 max-w-md">
+              <p className="text-gray-300 max-w-md mb-6">
                 Революционное решение для проведения честных интервью. Повысьте
                 качество найма с помощью передовых технологий мониторинга.
               </p>
-              {/* <div className="flex space-x-4">
-                <div className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-purple-600 transition-colors cursor-pointer">
-                  <span className="text-sm">f</span>
-                </div>
-                <div className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-purple-600 transition-colors cursor-pointer">
-                  <span className="text-sm">t</span>
-                </div>
-                <div className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-purple-600 transition-colors cursor-pointer">
-                  <span className="text-sm">in</span>
-                </div>
-              </div> */}
+              <div className="flex space-x-4">
+                <a
+                  href="https://github.com/vsezol/fairhire"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-purple-600 transition-colors"
+                >
+                  <Github className="w-5 h-5" />
+                </a>
+                <a
+                  href="https://t.me/lifeindev"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-500 transition-colors"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
+                  </svg>
+                </a>
+                <a
+                  href="https://boosty.to/vsezold"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-orange-500 transition-colors"
+                >
+                  <Heart className="w-5 h-5" />
+                </a>
+              </div>
             </div>
 
             <div></div>
