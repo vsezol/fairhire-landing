@@ -132,15 +132,18 @@ export default function Home() {
       const formData = new FormData();
       formData.append("firstName", contactForm.firstName);
       formData.append("email", contactForm.email);
-      formData.append("formMessage", contactForm.message);
+      formData.append("message", contactForm.message);
       formData.append("_subject", "FairHire: Связаться с нами");
       formData.append("_template", "table");
       formData.append("_captcha", "false");
 
-      const response = await fetch("https://formsubmit.co/vsezold@gmail.com", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        "https://formsubmit.co/3ab6c5dce02848d8e39c51ae6042b004",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       if (response.ok) {
         toast({
