@@ -1,0 +1,30 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /_next/
+Disallow: /admin/
+
+# Основные страницы для индексации
+Allow: /
+Allow: /*.css
+Allow: /*.js
+Allow: /*.png
+Allow: /*.jpg
+Allow: /*.jpeg
+Allow: /*.gif
+Allow: /*.svg
+Allow: /*.webp
+
+# Crawl-delay для различных ботов
+Crawl-delay: 1
+
+# Специфичные правила для поисковых систем
+User-agent: Googlebot
+Allow: /
+
+User-agent: Yandex
+Allow: /
+Crawl-delay: 2
+
+User-agent: Bingbot
+Allow: / 
