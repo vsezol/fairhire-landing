@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/lib/supabase";
 import { ArrowRight } from "lucide-react";
 
 interface DemoRequestModalProps {
@@ -29,22 +28,39 @@ export function DemoRequestModal({ isOpen, onClose }: DemoRequestModalProps) {
     e.preventDefault();
     setIsSubmitting(true);
 
-    const { error } = await supabase.from("demo_requests").insert([{ email }]);
+    try {
+      const formData = new FormData();
+      formData.append("email", email);
+      formData.append("_subject", "FairHire: Запрос на демо");
+      formData.append("_template", "table");
+      formData.append("_captcha", "false");
 
-    if (error) {
+      const response = await fetch("https://formsubmit.co/vsezold@gmail.com", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Успешно!",
+          description:
+            "Ваш запрос на демо отправлен. Мы свяжемся с вами в течение 24 часов.",
+        });
+        setEmail("");
+        onClose();
+      } else {
+        throw new Error("Ошибка отправки");
+      }
+    } catch (error) {
+      console.error("Ошибка отправки запроса на демо:", error);
       toast({
         title: "Ошибка!",
-        description: "Не удалось отправить запрос. Попробуйте снова.",
+        description:
+          "Не удалось отправить запрос. Попробуйте снова или напишите напрямую на vsezold@gmail.com",
         variant: "destructive",
       });
-    } else {
-      toast({
-        title: "Успешно!",
-        description: "Ваш запрос на демо отправлен.",
-      });
-      setEmail("");
-      onClose();
     }
+
     setIsSubmitting(false);
   };
 
@@ -55,7 +71,7 @@ export function DemoRequestModal({ isOpen, onClose }: DemoRequestModalProps) {
           <DialogTitle>Забронировать демо</DialogTitle>
           <DialogDescription>
             Оставьте свой email, и мы свяжемся с вами для назначения времени
-            демонстрации.
+            персональной демонстрации FairHire.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
@@ -75,7 +91,7 @@ export function DemoRequestModal({ isOpen, onClose }: DemoRequestModalProps) {
               disabled={isSubmitting}
               className="w-full bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white"
             >
-              {isSubmitting ? "Отправка..." : "Отправить запрос"}
+              {isSubmitting ? "Отправка..." : "Забронировать демо"}
               {!isSubmitting && <ArrowRight className="w-4 h-4 ml-2" />}
             </Button>
           </DialogFooter>

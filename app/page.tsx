@@ -26,7 +26,6 @@ import {
   Heart,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/lib/supabase";
 import { DemoRequestModal } from "@/components/demo-request-modal";
 
 export default function Home() {
@@ -37,6 +36,7 @@ export default function Home() {
   const [contactForm, setContactForm] = useState({
     firstName: "",
     email: "",
+    message: "", // Новое поле
   });
   const [isSubmittingContact, setIsSubmittingContact] = useState(false);
   const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
@@ -83,6 +83,20 @@ export default function Home() {
     };
   }, []);
 
+  // Проверяем URL параметры для показа сообщения об успешной отправке
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get("success") === "true") {
+      toast({
+        title: "Успешно!",
+        description:
+          "Ваше сообщение отправлено. Мы свяжемся с вами в ближайшее время.",
+      });
+      // Очищаем URL от параметра success
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, [toast]);
+
   // Calculate which badges should be active based on animation progress
   const getBadgeVisibility = (progress: number) => {
     return {
@@ -114,29 +128,44 @@ export default function Home() {
     e.preventDefault();
     setIsSubmittingContact(true);
 
-    const { error } = await supabase.from("contacts").insert([
-      {
-        first_name: contactForm.firstName,
-        email: contactForm.email,
-      },
-    ]);
+    try {
+      const formData = new FormData();
+      formData.append("firstName", contactForm.firstName);
+      formData.append("email", contactForm.email);
+      formData.append("formMessage", contactForm.message);
+      formData.append("_subject", "FairHire: Связаться с нами");
+      formData.append("_template", "table");
+      formData.append("_captcha", "false");
 
-    if (error) {
+      const response = await fetch("https://formsubmit.co/vsezold@gmail.com", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Успешно!",
+          description:
+            "Ваше сообщение отправлено. Мы свяжемся с вами в ближайшее время.",
+        });
+        setContactForm({
+          firstName: "",
+          email: "",
+          message: "",
+        });
+      } else {
+        throw new Error("Ошибка отправки");
+      }
+    } catch (error) {
+      console.error("Ошибка отправки формы:", error);
       toast({
         title: "Ошибка!",
-        description: "Не удалось отправить сообщение. Попробуйте снова.",
+        description:
+          "Не удалось отправить сообщение. Попробуйте снова или напишите напрямую на vsezold@gmail.com",
         variant: "destructive",
       });
-    } else {
-      toast({
-        title: "Успешно!",
-        description: "Ваше сообщение отправлено.",
-      });
-      setContactForm({
-        firstName: "",
-        email: "",
-      });
     }
+
     setIsSubmittingContact(false);
   };
 
@@ -833,6 +862,26 @@ export default function Home() {
                       value={contactForm.email}
                       onChange={handleContactChange}
                       required
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="message"
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                    >
+                      Сообщение
+                    </label>
+                    <textarea
+                      id="message"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent min-h-[100px]"
+                      placeholder="Расскажите о ваших потребностях..."
+                      value={contactForm.message}
+                      onChange={(e) =>
+                        setContactForm((prev) => ({
+                          ...prev,
+                          message: e.target.value,
+                        }))
+                      }
                     />
                   </div>
                 </div>
