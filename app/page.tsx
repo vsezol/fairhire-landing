@@ -876,7 +876,7 @@ export default function Home() {
                     </label>
                     <textarea
                       id="message"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent min-h-[100px]"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black  outline-none focus:border-transparent min-h-[100px]"
                       placeholder="Расскажите о ваших потребностях..."
                       value={contactForm.message}
                       onChange={(e) =>
