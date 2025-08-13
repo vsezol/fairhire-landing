@@ -743,10 +743,17 @@ export default function Home() {
                 </ul>
                 <Button
                   size="lg"
+                  asChild
                   className="w-full bg-white text-purple-800 hover:bg-gray-100 font-bold text-lg py-4 rounded-xl transform hover:scale-105 transition-all duration-300 shadow-xl"
                 >
-                  <Eye className="w-5 h-5 mr-2" />
-                  Панель мониторинга
+                  <a
+                    href="https://app.fair-hire.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Eye className="w-5 h-5 mr-2" />
+                    Панель мониторинга
+                  </a>
                 </Button>
               </CardContent>
             </Card>
