@@ -292,7 +292,7 @@ export default function Home() {
                 href="https://github.com/vsezol/fairhire"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-700 hover:text-purple-600 transition-colors"
+                className="text-gray-700 hover:text-purple-600 transition-colors hidden md:block"
               >
                 <Github className="w-6 h-6" />
               </a>
@@ -301,7 +301,7 @@ export default function Home() {
                 href="https://boosty.to/vsezold"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-700 hover:text-orange-500 transition-colors pr-2"
+                className="text-gray-700 hover:text-orange-500 transition-colors hidden md:block pr-2"
               >
                 <Heart className="w-6 h-6" />
               </a>
@@ -876,7 +876,7 @@ export default function Home() {
                     </label>
                     <textarea
                       id="message"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black  outline-none focus:border-transparent min-h-[100px]"
+                      className="w-full px-4 py-3 border border-gray-300 placeholder:text-muted-foreground rounded-lg text-sm focus:ring-2 focus:ring-black  outline-none focus:border-transparent min-h-[100px]"
                       placeholder="Расскажите о ваших потребностях..."
                       value={contactForm.message}
                       onChange={(e) =>
