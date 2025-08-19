@@ -794,7 +794,7 @@ export default function Home() {
                       download="FairHire.dmg"
                     >
                       <Download className="w-5 h-5 mr-2" />
-                      MacOS App
+                      MacOS Universal
                     </a>
                   </Button>
                   <Button
@@ -808,6 +808,32 @@ export default function Home() {
                     >
                       <Download className="w-5 h-5 mr-2" />
                       Windows App
+                    </a>
+                  </Button>
+                  <Button
+                    asChild
+                    size="lg"
+                    className="w-full bg-white text-blue-800 hover:bg-gray-100 font-bold text-lg py-4 rounded-xl transform hover:scale-105 transition-all duration-300 shadow-xl"
+                  >
+                    <a
+                      href="https://7a7lrn6qmd58vdze.public.blob.vercel-storage.com/FariHire%20arm64.deb"
+                      download="FairHire_arm64.deb"
+                    >
+                      <Download className="w-5 h-5 mr-2" />
+                      Debian ARM64
+                    </a>
+                  </Button>
+                  <Button
+                    asChild
+                    size="lg"
+                    className="w-full bg-white text-blue-800 hover:bg-gray-100 font-bold text-lg py-4 rounded-xl transform hover:scale-105 transition-all duration-300 shadow-xl"
+                  >
+                    <a
+                      href="https://7a7lrn6qmd58vdze.public.blob.vercel-storage.com/FairHire%20amd64.deb"
+                      download="FairHire_amd64.deb"
+                    >
+                      <Download className="w-5 h-5 mr-2" />
+                      Debian AMD64
                     </a>
                   </Button>
                 </div>
