@@ -790,37 +790,11 @@ export default function Home() {
                     className="w-full bg-white text-blue-800 hover:bg-gray-100 font-bold text-lg py-4 rounded-xl transform hover:scale-105 transition-all duration-300 shadow-xl"
                   >
                     <a
-                      href="http://github.com/vsezol/fairhire/releases/download/v1.0.5/FairHire-1.0.5-universal.dmg"
-                      download="FairHire.dmg"
-                    >
-                      <Download className="w-5 h-5 mr-2" />
-                      MacOS Universal
-                    </a>
-                  </Button>
-                  <Button
-                    asChild
-                    size="lg"
-                    className="w-full bg-white text-blue-800 hover:bg-gray-100 font-bold text-lg py-4 rounded-xl transform hover:scale-105 transition-all duration-300 shadow-xl"
-                  >
-                    <a
-                      href="/vsezol/fairhire/releases/download/v1.0.5/FairHire.Setup.1.0.5.exe"
-                      download="FairHire Setup.exe"
-                    >
-                      <Download className="w-5 h-5 mr-2" />
-                      Windows App
-                    </a>
-                  </Button>
-                  <Button
-                    asChild
-                    size="lg"
-                    className="w-full bg-white text-blue-800 hover:bg-gray-100 font-bold text-lg py-4 rounded-xl transform hover:scale-105 transition-all duration-300 shadow-xl"
-                  >
-                    <a
-                      href="https://github.com/vsezol/fairhire/releases/tag/v1.0.5"
+                      href="https://github.com/vsezol/fairhire/releases"
                       target="_blank"
                     >
                       <Download className="w-5 h-5 mr-2" />
-                      Other Platforms
+                      Download FairHire
                     </a>
                   </Button>
                   <Button
